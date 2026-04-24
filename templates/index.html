@@ -1,0 +1,336 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC Care Admin</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    display:flex;
+    background:#eef1f5;
+    color:#111827;
+}
+
+/* MENU */
+.sidebar{
+    width:250px;
+    height:100vh;
+    background:#0f172a;
+    padding:20px;
+    color:white;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:800;
+    color:#3b82f6;
+    margin-bottom:28px;
+}
+
+.menu button{
+    width:100%;
+    padding:13px 14px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:12px;
+    background:none;
+    color:#e5e7eb;
+    text-align:left;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+}
+
+.menu button:hover{
+    background:#1e293b;
+}
+
+.menu .active{
+    background:#3b82f6;
+    color:white;
+}
+
+/* RIGHT */
+.main{
+    flex:1;
+    padding:28px;
+}
+
+.top{
+    background:white;
+    padding:22px 26px;
+    border-radius:16px;
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:22px;
+}
+
+.content{
+    background:white;
+    padding:25px;
+    border-radius:16px;
+}
+
+.content h2{
+    font-size:16px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.box-group{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-bottom:22px;
+}
+
+.box{
+    background:white;
+    padding:24px;
+    border-radius:16px;
+    text-align:center;
+}
+
+.box h3{
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.box h2{
+    font-size:34px;
+    color:#3b82f6;
+    font-weight:800;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:14px;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+}
+
+th{
+    font-size:12px;
+    color:#6b7280;
+}
+
+td{
+    font-size:14px;
+}
+
+.tag{
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.blue{background:#dbeafe;color:#2563eb;}
+.green{background:#dcfce7;color:#15803d;}
+.orange{background:#ffedd5;color:#ea580c;}
+
+.page{display:none;}
+.show{display:block;}
+
+.card{
+    background:#f8fafc;
+    padding:16px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<div class="logo">PC Care Admin</div>
+
+<div class="menu">
+<button class="active" onclick="showPage('tongquan',this)">🏠 Tổng quan</button>
+<button onclick="showPage('dichvu',this)">🛠 Dịch vụ sửa chữa</button>
+<button onclick="showPage('khachhang',this)">👥 Khách hàng</button>
+<button onclick="showPage('hoadon',this)">📄 Hóa đơn</button>
+<button onclick="showPage('caidat',this)">⚙ Cài đặt</button>
+</div>
+</div>
+
+<div class="main">
+
+<!-- TỔNG QUAN -->
+<div id="tongquan" class="page show">
+<div class="top">Tổng quan</div>
+
+<div class="box-group">
+<div class="box">
+<h3>Đang sửa</h3>
+<h2>06</h2>
+</div>
+
+<div class="box">
+<h3>Chờ linh kiện</h3>
+<h2>02</h2>
+</div>
+
+<div class="box">
+<h3>Hoàn thành</h3>
+<h2>128</h2>
+</div>
+</div>
+
+<div class="content">
+<h2>6 Yêu cầu khách hàng mới nhất</h2>
+
+<table>
+<tr>
+<th>MÃ ĐƠN</th>
+<th>THIẾT BỊ</th>
+<th>DỊCH VỤ</th>
+<th>TRẠNG THÁI</th>
+</tr>
+
+<tr><td>#2001</td><td>Dell XPS</td><td>Thay keo tản nhiệt</td><td><span class="tag blue">Đang xử lý</span></td></tr>
+<tr><td>#2002</td><td>Macbook Pro</td><td>Thay màn hình</td><td><span class="tag orange">Chờ linh kiện</span></td></tr>
+<tr><td>#2003</td><td>PC Gaming</td><td>Vệ sinh tổng quát</td><td><span class="tag green">Hoàn thành</span></td></tr>
+<tr><td>#2004</td><td>Asus ROG</td><td>Nâng RAM</td><td><span class="tag blue">Đang lắp ráp</span></td></tr>
+<tr><td>#2005</td><td>HP Envy</td><td>Cài Windows</td><td><span class="tag blue">Đang cài đặt</span></td></tr>
+<tr><td>#2006</td><td>ThinkPad</td><td>Sửa bản lề</td><td><span class="tag orange">Đợi báo giá</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- DỊCH VỤ -->
+<div id="dichvu" class="page">
+<div class="top">Dịch vụ sửa chữa</div>
+
+<div class="content">
+<h2>Danh mục dịch vụ</h2>
+
+<table>
+<tr>
+<th>TÊN DỊCH VỤ</th>
+<th>GIÁ</th>
+<th>BẢO HÀNH</th>
+</tr>
+
+<tr><td>Cài Windows</td><td>200k</td><td>1 tháng</td></tr>
+<tr><td>Vệ sinh máy</td><td>150k</td><td>Không</td></tr>
+<tr><td>Nâng SSD / RAM</td><td>+100k công</td><td>36 tháng</td></tr>
+<tr><td>Thay màn hình</td><td>Tùy máy</td><td>6 tháng</td></tr>
+<tr><td>Sửa main</td><td>Báo giá</td><td>3 tháng</td></tr>
+<tr><td>Cứu dữ liệu</td><td>Từ 500k</td><td>Không</td></tr>
+</table>
+</div>
+</div>
+
+<!-- KHÁCH HÀNG -->
+<div id="khachhang" class="page">
+<div class="top">Khách hàng</div>
+
+<div class="content">
+<h2>Danh sách khách hàng</h2>
+
+<table>
+<tr>
+<th>HỌ TÊN</th>
+<th>SĐT</th>
+<th>ĐỊA CHỈ</th>
+</tr>
+
+<tr><td>Nguyễn Văn A</td><td>0912xxx</td><td>Hà Nội</td></tr>
+<tr><td>Trần Thị B</td><td>0988xxx</td><td>TP.HCM</td></tr>
+<tr><td>Lê Văn C</td><td>0933xxx</td><td>Đà Nẵng</td></tr>
+<tr><td>Phạm Minh D</td><td>0966xxx</td><td>Huế</td></tr>
+<tr><td>Hoàng Gia E</td><td>0977xxx</td><td>Cần Thơ</td></tr>
+<tr><td>Đặng Khánh</td><td>0909xxx</td><td>Hà Nội</td></tr>
+</table>
+</div>
+</div>
+
+<!-- HÓA ĐƠN -->
+<div id="hoadon" class="page">
+<div class="top">Hóa đơn</div>
+
+<div class="content">
+<h2>Lịch sử hóa đơn</h2>
+
+<table>
+<tr>
+<th>MÃ</th>
+<th>KHÁCH</th>
+<th>NGÀY</th>
+<th>SỐ TIỀN</th>
+<th>TRẠNG THÁI</th>
+</tr>
+
+<tr><td>HD001</td><td>Nguyễn Văn A</td><td>24/04</td><td>1.500k</td><td><span class="tag green">Đã thu</span></td></tr>
+<tr><td>HD002</td><td>Trần B</td><td>23/04</td><td>450k</td><td><span class="tag orange">Chờ trả</span></td></tr>
+<tr><td>HD003</td><td>Lê C</td><td>22/04</td><td>800k</td><td><span class="tag green">Đã thu</span></td></tr>
+<tr><td>HD004</td><td>Phạm D</td><td>21/04</td><td>2.200k</td><td><span class="tag green">Đã thu</span></td></tr>
+<tr><td>HD005</td><td>Hoàng E</td><td>20/04</td><td>650k</td><td><span class="tag orange">Chờ trả</span></td></tr>
+<tr><td>HD006</td><td>Đặng Khánh</td><td>19/04</td><td>1.250k</td><td><span class="tag green">Đã thu</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- CÀI ĐẶT -->
+<div id="caidat" class="page">
+<div class="top">Cài đặt</div>
+
+<div class="content">
+
+<h2>Tài khoản Admin</h2>
+
+<div class="card">
+<p><b>Họ tên:</b> Đặng Khánh</p>
+<p><b>Tài khoản:</b> admin</p>
+<p><b>Email:</b> admin@gmail.com</p>
+<p><b>Vai trò:</b> Quản trị viên</p>
+<p><b>Trạng thái:</b> Hoạt động</p>
+</div>
+
+<h2>Hệ thống</h2>
+
+<div class="card">
+<p><b>Tên cửa hàng:</b> PC Care Admin</p>
+<p><b>Phiên bản:</b> v1.0</p>
+<p><b>Ngôn ngữ:</b> Tiếng Việt</p>
+<p><b>Bảo mật:</b> An toàn</p>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+function showPage(id,btn){
+let pages=document.querySelectorAll(".page");
+pages.forEach(p=>p.classList.remove("show"));
+document.getElementById(id).classList.add("show");
+
+let buttons=document.querySelectorAll(".menu button");
+buttons.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+}
+</script>
+
+</body>
+</html>
+```
