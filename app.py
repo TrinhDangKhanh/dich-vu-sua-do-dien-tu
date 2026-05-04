@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import os
 
-from database import db, KhachHang, DichVu, LinhKien, DonHang, ChiTietDonHang, ChiTietLinhKien, NhanVien, TrangThaiDonHang, TrangThaiThanhToan, LoaiThietBi
+from database_improved import db, KhachHang, DichVu, LinhKien, DonHang, ChiTietDonHang, ChiTietLinhKien, NhanVien, TrangThaiDonHang, TrangThaiThanhToan, LoaiThietBi, NhapKho, LichSuDonHang, BaoCao, CaiDat, LichSuHoatDong, PhanQuyen
 from config import config
 
 def create_app(config_name='default'):
@@ -34,22 +34,22 @@ def create_app(config_name='default'):
             admin = NhanVien(
                 ho_ten='Quản trị viên',
                 tai_khoan='admin',
-                mat_khau=generate_password_hash('admin123'),
                 email='admin@pccare.com',
-                vai_tro='admin'
+                vai_tro=PhanQuyen.ADMIN
             )
+            admin.set_password('admin123')
             db.session.add(admin)
             
             # Thêm một số dịch vụ mẫu
             dich_vus = [
-                DichVu(ten_dich_vu='Cài đặt Windows', gia_ban=200000, thoi_gian_bao_hanh=1, mo_ta='Cài đặt Windows 10/11, driver và phần mềm cơ bản'),
-                DichVu(ten_dich_vu='Vệ sinh máy tính', gia_ban=150000, thoi_gian_bao_hanh=0, mo_ta='Vệ sinh tổng quát, tản nhiệt, keo tản nhiệt'),
-                DichVu(ten_dich_vu='Thay keo tản nhiệt', gia_ban=250000, thoi_gian_bao_hanh=3, mo_ta='Thay keo tản nhiệt cho CPU/GPU'),
-                DichVu(ten_dich_vu='Nâng cấp RAM', gia_ban=100000, thoi_gian_bao_hanh=36, mo_ta='Nâng cấp RAM laptop, PC'),
-                DichVu(ten_dich_vu='Thay SSD', gia_ban=100000, thoi_gian_bao_hanh=36, mo_ta='Thay SSD, cài đặt hệ điều hành'),
-                DichVu(ten_dich_vu='Thay màn hình Laptop', gia_ban=1500000, thoi_gian_bao_hanh=6, mo_ta='Thay màn hình LCD, LED cho laptop'),
-                DichVu(ten_dich_vu='Sửa chữa Mainboard', gia_ban=500000, thoi_gian_bao_hanh=3, mo_ta='Sửa chữa các lỗi mainboard, chipset'),
-                DichVu(ten_dich_vu='Cứu dữ liệu', gia_ban=800000, thoi_gian_bao_hanh=0, mo_ta='Cứu dữ liệu từ ổ cứng hỏng, format'),
+                DichVu(ma_dich_vu='DV001', ten_dich_vu='Cài đặt Windows', gia_ban=200000, thoi_gian_bao_hanh=1, mo_ta='Cài đặt Windows 10/11, driver và phần mềm cơ bản', loai_dich_vu='sua_chua'),
+                DichVu(ma_dich_vu='DV002', ten_dich_vu='Vệ sinh máy tính', gia_ban=150000, thoi_gian_bao_hanh=0, mo_ta='Vệ sinh tổng quát, tản nhiệt, keo tản nhiệt', loai_dich_vu='bao_trih'),
+                DichVu(ma_dich_vu='DV003', ten_dich_vu='Thay keo tản nhiệt', gia_ban=250000, thoi_gian_bao_hanh=3, mo_ta='Thay keo tản nhiệt cho CPU/GPU', loai_dich_vu='sua_chua'),
+                DichVu(ma_dich_vu='DV004', ten_dich_vu='Nâng cấp RAM', gia_ban=100000, thoi_gian_bao_hanh=36, mo_ta='Nâng cấp RAM laptop, PC', loai_dich_vu='cap_nhat'),
+                DichVu(ma_dich_vu='DV005', ten_dich_vu='Thay SSD', gia_ban=100000, thoi_gian_bao_hanh=36, mo_ta='Thay SSD, cài đặt hệ điều hành', loai_dich_vu='cap_nhat'),
+                DichVu(ma_dich_vu='DV006', ten_dich_vu='Thay màn hình Laptop', gia_ban=1500000, thoi_gian_bao_hanh=6, mo_ta='Thay màn hình LCD, LED cho laptop', loai_dich_vu='sua_chua'),
+                DichVu(ma_dich_vu='DV007', ten_dich_vu='Sửa chữa Mainboard', gia_ban=500000, thoi_gian_bao_hanh=3, mo_ta='Sửa chữa các lỗi mainboard, chipset', loai_dich_vu='sua_chua'),
+                DichVu(ma_dich_vu='DV008', ten_dich_vu='Cứu dữ liệu', gia_ban=800000, thoi_gian_bao_hanh=0, mo_ta='Cứu dữ liệu từ ổ cứng hỏng, format', loai_dich_vu='sua_chua'),
             ]
             
             for dv in dich_vus:
@@ -58,14 +58,14 @@ def create_app(config_name='default'):
             
             # Thêm khách hàng mẫu
             khach_hangs = [
-                KhachHang(ho_ten='Nguyễn Văn An', so_dien_thoai='0912345678', email='an.nguyen@email.com', dia_chi='Hà Nội'),
-                KhachHang(ho_ten='Trần Thị Bình', so_dien_thoai='0987654321', email='binh.tran@email.com', dia_chi='TP. Hồ Chí Minh'),
-                KhachHang(ho_ten='Lê Văn Cường', so_dien_thoai='0934567890', email='cuong.le@email.com', dia_chi='Đà Nẵng'),
-                KhachHang(ho_ten='Phạm Thị Dung', so_dien_thoai='0967890123', email='dung.pham@email.com', dia_chi='Hải Phòng'),
-                KhachHang(ho_ten='Hoàng Văn Em', so_dien_thoai='0978901234', email='em.hoang@email.com', dia_chi='Cần Thơ'),
-                KhachHang(ho_ten='Đặng Thị Fan', so_dien_thoai='0901234567', email='fan.dang@email.com', dia_chi='Hà Nội'),
-                KhachHang(ho_ten='Ngô Văn Giàu', so_dien_thoai='0923456789', email='giau.ngo@email.com', dia_chi='TP. Hồ Chí Minh'),
-                KhachHang(ho_ten='Bùi Thị Hương', so_dien_thoai='0945678901', email='huong.bui@email.com', dia_chi='Huế'),
+                KhachHang(ma_khach_hang='KH001', ho_ten='Nguyễn Văn An', so_dien_thoai='0912345678', email='an.nguyen@email.com', dia_chi='Hà Nội', gioi_tinh='Nam', cong_ty='Công ty ABC'),
+                KhachHang(ma_khach_hang='KH002', ho_ten='Trần Thị Bình', so_dien_thoai='0987654321', email='binh.tran@email.com', dia_chi='TP. Hồ Chí Minh', gioi_tinh='Nữ', cong_ty='Công ty XYZ'),
+                KhachHang(ma_khach_hang='KH003', ho_ten='Lê Văn Cường', so_dien_thoai='0934567890', email='cuong.le@email.com', dia_chi='Đà Nẵng', gioi_tinh='Nam', cong_ty='Công ty DEF'),
+                KhachHang(ma_khach_hang='KH004', ho_ten='Phạm Thị Dung', so_dien_thoai='0967890123', email='dung.pham@email.com', dia_chi='Hải Phòng', gioi_tinh='Nữ', loai_khach_hang='doanh_nghiep'),
+                KhachHang(ma_khach_hang='KH005', ho_ten='Hoàng Văn Em', so_dien_thoai='0978901234', email='em.hoang@email.com', dia_chi='Cần Thơ', gioi_tinh='Nam', loai_khach_hang='ca_nhan'),
+                KhachHang(ma_khach_hang='KH006', ho_ten='Đặng Thị Fan', so_dien_thoai='0901234567', email='fan.dang@email.com', dia_chi='Hà Nội', gioi_tinh='Nữ', cong_ty='Freelancer'),
+                KhachHang(ma_khach_hang='KH007', ho_ten='Ngô Văn Giàu', so_dien_thoai='0923456789', email='giau.ngo@email.com', dia_chi='TP. Hồ Chí Minh', gioi_tinh='Nam', loai_khach_hang='doanh_nghiep'),
+                KhachHang(ma_khach_hang='KH008', ho_ten='Bùi Thị Hương', so_dien_thoai='0945678901', email='huong.bui@email.com', dia_chi='Huế', gioi_tinh='Nữ', loai_khach_hang='ca_nhan'),
             ]
             
             for kh in khach_hangs:
@@ -74,16 +74,16 @@ def create_app(config_name='default'):
             
             # Thêm linh kiện mẫu
             linh_kiens = [
-                LinhKien(ten_linh_kien='RAM DDR4 8GB', ma_linh_kien='RAM8G01', so_luong_ton=50, gia_nhap=800000, gia_ban=1200000, nha_cung_cap='Kingston'),
-                LinhKien(ten_linh_kien='RAM DDR4 16GB', ma_linh_kien='RAM16G01', so_luong_ton=30, gia_nhap=1500000, gia_ban=2200000, nha_cung_cap='Corsair'),
-                LinhKien(ten_linh_kien='SSD 240GB SATA', ma_linh_kien='SSD24001', so_luong_ton=25, gia_nhap=600000, gia_ban=950000, nha_cung_cap='Samsung'),
-                LinhKien(ten_linh_kien='SSD 480GB SATA', ma_linh_kien='SSD48001', so_luong_ton=20, gia_nhap=1000000, gia_ban=1650000, nha_cung_cap='Crucial'),
-                LinhKien(ten_linh_kien='SSD NVMe 500GB', ma_linh_kien='SSD50001', so_luong_ton=15, gia_nhap=1500000, gia_ban=2400000, nha_cung_cap='Western Digital'),
-                LinhKien(ten_linh_kien='Màn hình Laptop 14"', ma_linh_kien='LCD14001', so_luong_ton=10, gia_nhap=2000000, gia_ban=3200000, nha_cung_cap='LG'),
-                LinhKien(ten_linh_kien='Màn hình Laptop 15.6"', ma_linh_kien='LCD15601', so_luong_ton=8, gia_nhap=2500000, gia_ban=3800000, nha_cung_cap='AU Optronics'),
-                LinhKien(ten_linh_kien='Keo tản nhiệt', ma_linh_kien='GEL001', so_luong_ton=100, gia_nhap=50000, gia_ban=100000, nha_cung_cap='Arctic Silver'),
-                LinhKien(ten_linh_kien='Pin Laptop 6 Cell', ma_linh_kien='BAT6C01', so_luong_ton=20, gia_nhap=300000, gia_ban=550000, nha_cung_cap='Battery Pro'),
-                LinhKien(ten_linh_kien='Sạc Laptop 65W', ma_linh_kien='ADP65W01', so_luong_ton=30, gia_nhap=150000, gia_ban=280000, nha_cung_cap='Anker'),
+                LinhKien(ma_linh_kien='LK001', ten_linh_kien='RAM DDR4 8GB', so_luong_ton=50, gia_nhap=800000, gia_ban=1200000, nha_cung_cap='Kingston', loai_linh_kien='RAM'),
+                LinhKien(ma_linh_kien='LK002', ten_linh_kien='RAM DDR4 16GB', so_luong_ton=30, gia_nhap=1500000, gia_ban=2200000, nha_cung_cap='Corsair', loai_linh_kien='RAM'),
+                LinhKien(ma_linh_kien='LK003', ten_linh_kien='SSD 240GB SATA', so_luong_ton=25, gia_nhap=600000, gia_ban=950000, nha_cung_cap='Samsung', loai_linh_kien='SSD'),
+                LinhKien(ma_linh_kien='LK004', ten_linh_kien='SSD 480GB SATA', so_luong_ton=20, gia_nhap=1000000, gia_ban=1650000, nha_cung_cap='Crucial', loai_linh_kien='SSD'),
+                LinhKien(ma_linh_kien='LK005', ten_linh_kien='SSD NVMe 500GB', so_luong_ton=15, gia_nhap=1500000, gia_ban=2400000, nha_cung_cap='Western Digital', loai_linh_kien='SSD'),
+                LinhKien(ma_linh_kien='LK006', ten_linh_kien='Màn hình Laptop 14"', so_luong_ton=10, gia_nhap=2000000, gia_ban=3200000, nha_cung_cap='LG', loai_linh_kien='Man_hinh'),
+                LinhKien(ma_linh_kien='LK007', ten_linh_kien='Màn hình Laptop 15.6"', so_luong_ton=8, gia_nhap=2500000, gia_ban=3800000, nha_cung_cap='AU Optronics', loai_linh_kien='Man_hinh'),
+                LinhKien(ma_linh_kien='LK008', ten_linh_kien='Keo tản nhiệt', so_luong_ton=100, gia_nhap=50000, gia_ban=100000, nha_cung_cap='Arctic Silver', loai_linh_kien='Phu_kien'),
+                LinhKien(ma_linh_kien='LK009', ten_linh_kien='Pin Laptop 6 Cell', so_luong_ton=20, gia_nhap=300000, gia_ban=550000, nha_cung_cap='Battery Pro', loai_linh_kien='Pin'),
+                LinhKien(ma_linh_kien='LK010', ten_linh_kien='Sạc Laptop 65W', so_luong_ton=30, gia_nhap=150000, gia_ban=280000, nha_cung_cap='Anker', loai_linh_kien='Sac'),
             ]
             
             for lk in linh_kiens:
@@ -97,6 +97,7 @@ def create_app(config_name='default'):
                 DonHang(
                     ma_don_hang='DH20240501001',
                     khach_hang_id=1,
+                    nhan_vien_id=1,  # admin xử lý
                     ten_thiet_bi='Dell XPS 15',
                     loai_thiet_bi=LoaiThietBi.LAPTOP,
                     nhan_hieu='Dell',
@@ -104,11 +105,14 @@ def create_app(config_name='default'):
                     serial_number='DLXPS957001',
                     mo_ta_loi='Máy chạy chậm, nóng, cần vệ sinh và nâng cấp',
                     trang_thai=TrangThaiDonHang.DANG_XU_LY,
-                    tong_tien=1350000
+                    trang_thai_thanh_toan=TrangThaiThanhToan.CHUA_THANH_TOAN,
+                    tong_tien=1350000,
+                    ngay_hen_tra=datetime.utcnow() + timedelta(days=3)
                 ),
                 DonHang(
                     ma_don_hang='DH20240501002',
                     khach_hang_id=2,
+                    nhan_vien_id=1,
                     ten_thiet_bi='Macbook Pro 13"',
                     loai_thiet_bi=LoaiThietBi.MACBOOK,
                     nhan_hieu='Apple',
@@ -116,11 +120,15 @@ def create_app(config_name='default'):
                     serial_number='MBP2020001',
                     mo_ta_loi='Màn hình bị sọc, cần thay màn hình mới',
                     trang_thai=TrangThaiDonHang.CHO_LINH_KIEN,
-                    tong_tien=3200000
+                    trang_thai_thanh_toan=TrangThaiThanhToan.DA_DAT_COC,
+                    tong_tien=3200000,
+                    tien_dat_coc=1600000,
+                    ngay_hen_tra=datetime.utcnow() + timedelta(days=7)
                 ),
                 DonHang(
                     ma_don_hang='DH20240501003',
                     khach_hang_id=3,
+                    nhan_vien_id=1,
                     ten_thiet_bi='PC Gaming',
                     loai_thiet_bi=LoaiThietBi.PC_DESKTOP,
                     nhan_hieu='Custom',
@@ -128,12 +136,17 @@ def create_app(config_name='default'):
                     serial_number='PCG001',
                     mo_ta_loi='Máy không lên nguồn, cần kiểm tra main',
                     trang_thai=TrangThaiDonHang.HOAN_THANH,
+                    trang_thai_thanh_toan=TrangThaiThanhToan.DA_THANH_TOAN,
                     tong_tien=500000,
-                    ngay_hoan_thanh=datetime.utcnow()
+                    ngay_hoan_thanh=datetime.utcnow() - timedelta(days=2),
+                    ngay_giao_hang=datetime.utcnow() - timedelta(days=1),
+                    ghi_chu_nhan_vien='Sửa thành công mainboard, khách hàng hài lòng',
+                    danh_gia_khach_hang=5
                 ),
                 DonHang(
                     ma_don_hang='DH20240501004',
                     khach_hang_id=4,
+                    nhan_vien_id=1,
                     ten_thiet_bi='HP Envy 13',
                     loai_thiet_bi=LoaiThietBi.LAPTOP,
                     nhan_hieu='HP',
@@ -141,11 +154,14 @@ def create_app(config_name='default'):
                     serial_number='HPENV13001',
                     mo_ta_loi='Cần cài đặt lại Windows và phần mềm văn phòng',
                     trang_thai=TrangThaiDonHang.DANG_XU_LY,
-                    tong_tien=200000
+                    trang_thai_thanh_toan=TrangThaiThanhToan.CHUA_THANH_TOAN,
+                    tong_tien=200000,
+                    ngay_hen_tra=datetime.utcnow() + timedelta(days=2)
                 ),
                 DonHang(
                     ma_don_hang='DH20240501005',
                     khach_hang_id=5,
+                    nhan_vien_id=1,
                     ten_thiet_bi='Asus ROG Strix',
                     loai_thiet_bi=LoaiThietBi.LAPTOP,
                     nhan_hieu='Asus',
@@ -153,8 +169,12 @@ def create_app(config_name='default'):
                     serial_number='ASUSROG001',
                     mo_ta_loi='Nâng cấp RAM từ 8GB lên 16GB',
                     trang_thai=TrangThaiDonHang.HOAN_THANH,
+                    trang_thai_thanh_toan=TrangThaiThanhToan.DA_THANH_TOAN,
                     tong_tien=1100000,
-                    ngay_hoan_thanh=datetime.utcnow()
+                    ngay_hoan_thanh=datetime.utcnow() - timedelta(days=5),
+                    ngay_giao_hang=datetime.utcnow() - timedelta(days=4),
+                    ghi_chu_nhan_vien='Nâng cấp RAM thành công, máy chạy nhanh hơn',
+                    danh_gia_khach_hang=4
                 ),
             ]
             

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Khách hàng - PC Care{% endblock %}
+
+{% block content %}
+<div class="top">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div>Khách hàng</div>
+            <div style="font-size: 14px; font-weight: 400; color: #6b7280; margin-top: 5px;">
+                Quản lý thông tin khách hàng
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="content" style="margin-bottom: 22px;">
+    <form method="GET" style="display: flex; gap: 15px; align-items: end;">
+        <div style="flex: 1;">
+            <label for="search" style="display: block; margin-bottom: 5px; font-weight: 500; color: #374151; font-size: 14px;">Tìm kiếm khách hàng</label>
+            <input type="text" id="search" name="search" 
+                   value="{{ search }}" placeholder="Tên, SĐT, Email..." 
+                   style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-primary">
+                🔍 Tìm kiếm
+            </button>
+            <a href="{{ url_for('danh_sach_khach_hang') }}" class="btn btn-secondary">
+                🔄 Reset
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Customers table -->
+<div class="content">
+    <table>
+        <thead>
+            <tr>
+                <th>Mã KH</th>
+                <th>Họ tên</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Loại KH</th>
+                <th>Công ty</th>
+                <th>Địa chỉ</th>
+                <th>Ngày tạo</th>
+                <th>Số đơn hàng</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kh in khach_hang.items %}
+            <tr>
+                <td><span class="tag green">{{ kh.ma_khach_hang }}</span></td>
+                <td><strong>{{ kh.ho_ten }}</strong></td>
+                <td>{{ kh.so_dien_thoai }}</td>
+                <td>{{ kh.email or '-' }}</td>
+                <td>
+                    {% if kh.loai_khach_hang == 'doanh_nghiep' %}
+                        <span class="tag orange">Doanh nghiệp</span>
+                    {% else %}
+                        <span class="tag blue">Cá nhân</span>
+                    {% endif %}
+                </td>
+                <td>{{ kh.cong_ty or '-' }}</td>
+                <td>{{ kh.dia_chi or '-' }}</td>
+                <td>{{ kh.ngay_tao.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <span class="tag blue">{{ kh.don_hang|length }}</span>
+                </td>
+                <td>
+                    <a href="#" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; margin-right: 5px;">
+                        👁️
+                    </a>
+                    <a href="#" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">
+                        ✏️
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    {% if khach_hang.pages > 1 %}
+    <div class="pagination">
+        {% if khach_hang.has_prev %}
+            <a href="{{ url_for('danh_sach_khach_hang', page=khach_hang.prev_num, search=search) }}">‹</a>
+        {% endif %}
+        
+        {% for page_num in khach_hang.iter_pages() %}
+            {% if page_num %}
+                {% if page_num != khach_hang.page %}
+                    <a href="{{ url_for('danh_sach_khach_hang', page=page_num, search=search) }}">{{ page_num }}</a>
+                {% else %}
+                    <span class="current">{{ page_num }}</span>
+                {% endif %}
+            {% else %}
+                <span>...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if khach_hang.has_next %}
+            <a href="{{ url_for('danh_sach_khach_hang', page=khach_hang.next_num, search=search) }}">›</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
