@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - PC Care</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(16, 185, 129, 0.9)),
+                        url('https://images.unsplash.com/photo-1587829741301-dc798b83a3b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .register-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .register-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .register-body {
+            padding: 40px 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-danger {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 15px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .register-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .register-header {
+                padding: 25px 20px;
+            }
+            
+            .register-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .register-body {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Custom scrollbar */
+        .register-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .register-body::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .register-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .register-body::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>🔧 PC Care</h1>
+            <p>Đăng ký tài khoản khách hàng mới</p>
+        </div>
+        
+        <div class="register-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('dang_ky_khach_hang') }}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ho_ten">Họ và tên *</label>
+                        <input type="text" id="ho_ten" name="ho_ten" required 
+                               placeholder="Nhập họ và tên"
+                               value="{{ request.form.ho_ten or '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="so_dien_thoai">Số điện thoại *</label>
+                        <input type="tel" id="so_dien_thoai" name="so_dien_thoai" required 
+                               placeholder="Nhập số điện thoại"
+                               value="{{ request.form.so_dien_thoai or '' }}">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required 
+                           placeholder="Nhập email"
+                           value="{{ request.form.email or '' }}">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="mat_khau">Mật khẩu *</label>
+                    <input type="password" id="mat_khau" name="mat_khau" required 
+                           placeholder="Nhập mật khẩu (ít nhất 6 ký tự)">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="confirm_mat_khau">Xác nhận mật khẩu *</label>
+                    <input type="password" id="confirm_mat_khau" name="confirm_mat_khau" required 
+                           placeholder="Nhập lại mật khẩu">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ngay_sinh">Ngày sinh</label>
+                        <input type="date" id="ngay_sinh" name="ngay_sinh" 
+                               value="{{ request.form.ngay_sinh or '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gioi_tinh">Giới tính</label>
+                        <select id="gioi_tinh" name="gioi_tinh">
+                            <option value="">Chọn giới tính</option>
+                            <option value="Nam" {% if request.form.gioi_tinh == 'Nam' %}selected{% endif %}>Nam</option>
+                            <option value="Nữ" {% if request.form.gioi_tinh == 'Nữ' %}selected{% endif %}>Nữ</option>
+                            <option value="Khác" {% if request.form.gioi_tinh == 'Khác' %}selected{% endif %}>Khác</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="dia_chi">Địa chỉ</label>
+                    <textarea id="dia_chi" name="dia_chi" placeholder="Nhập địa chỉ">{{ request.form.dia_chi or '' }}</textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cong_ty">Công ty</label>
+                        <input type="text" id="cong_ty" name="cong_ty" 
+                               placeholder="Nhập tên công ty (nếu có)"
+                               value="{{ request.form.cong_ty or '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loai_khach_hang">Loại khách hàng</label>
+                        <select id="loai_khach_hang" name="loai_khach_hang">
+                            <option value="ca_nhan" {% if request.form.loai_khach_hang == 'ca_nhan' %}selected{% endif %}>Cá nhân</option>
+                            <option value="doanh_nghiep" {% if request.form.loai_khach_hang == 'doanh_nghiep' %}selected{% endif %}>Doanh nghiệp</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-register">
+                    Đăng ký tài khoản
+                </button>
+            </form>
+            
+            <div class="divider">
+                <span>hoặc</span>
+            </div>
+            
+            <div class="links">
+                <p>Đã có tài khoản? <a href="{{ url_for('dang_nhap_khach_hang') }}">Đăng nhập ngay</a></p>
+                <br>
+                <p><a href="{{ url_for('dang_nhap') }}">Đăng nhập quản trị viên</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

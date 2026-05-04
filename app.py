@@ -18,11 +18,15 @@ def create_app(config_name='default'):
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'dang_nhap'
-    login_manager.login_message = 'Vui lòng đăng nhập để truy cập trang này!'
     
     @login_manager.user_loader
     def load_user(user_id):
-        return NhanVien.query.get(int(user_id))
+        # Thử tìm admin/nhân viên trước
+        user = NhanVien.query.get(int(user_id))
+        if user:
+            return user
+        # Nếu không tìm thấy, thử tìm khách hàng
+        return KhachHang.query.get(int(user_id))
     
     # Tạo database và admin mặc định
     with app.app_context():
@@ -188,7 +192,11 @@ def create_app(config_name='default'):
     @app.route('/')
     def index():
         if current_user.is_authenticated:
-            return redirect(url_for('dashboard'))
+            # Kiểm tra xem là admin/nhân viên hay khách hàng
+            if current_user.__class__.__name__ == 'NhanVien':  # Admin/nhân viên
+                return redirect(url_for('dashboard'))
+            else:  # Khách hàng
+                return redirect(url_for('dashboard_khach_hang'))
         return redirect(url_for('dang_nhap'))
     
     @app.route('/dang-nhap', methods=['GET', 'POST'])
@@ -510,6 +518,179 @@ def create_app(config_name='default'):
             headers={'Content-Disposition': f'attachment; filename=bao_cao_thang_{thang}_{nam}.csv'}
         )
         return response
+    
+    # Routes cho khách hàng
+    @app.route('/dang-nhap-khach-hang', methods=['GET', 'POST'])
+    def dang_nhap_khach_hang():
+        if current_user.is_authenticated:
+            # Nếu đã đăng nhập, chuyển hướng đến dashboard phù hợp
+            if current_user.__class__.__name__ == 'NhanVien':  # Admin/nhân viên
+                return redirect(url_for('dashboard'))
+            else:  # Khách hàng
+                return redirect(url_for('dashboard_khach_hang'))
+        
+        if request.method == 'POST':
+            email_or_sdt = request.form.get('email')
+            mat_khau = request.form.get('mat_khau')
+            
+            # Tìm khách hàng theo email hoặc SĐT
+            khach_hang = KhachHang.query.filter(
+                (KhachHang.email == email_or_sdt) | 
+                (KhachHang.so_dien_thoai == email_or_sdt)
+            ).first()
+            
+            if khach_hang and khach_hang.check_password(mat_khau):
+                if khach_hang.trang_thai == 'hoat_dong':
+                    login_user(khach_hang)
+                    flash('Đăng nhập thành công!', 'success')
+                    return redirect(url_for('dashboard_khach_hang'))
+                else:
+                    flash('Tài khoản của bạn đã bị khóa!', 'danger')
+            else:
+                flash('Email/SĐT hoặc mật khẩu không đúng!', 'danger')
+        
+        return render_template('khach_hang/dang_nhap.html')
+    
+    @app.route('/dang-ky-khach-hang', methods=['GET', 'POST'])
+    def dang_ky_khach_hang():
+        if request.method == 'POST':
+            # Lấy dữ liệu từ form
+            ho_ten = request.form.get('ho_ten')
+            so_dien_thoai = request.form.get('so_dien_thoai')
+            email = request.form.get('email')
+            mat_khau = request.form.get('mat_khau')
+            confirm_mat_khau = request.form.get('confirm_mat_khau')
+            
+            # Validation
+            if not all([ho_ten, so_dien_thoai, email, mat_khau, confirm_mat_khau]):
+                flash('Vui lòng điền đầy đủ thông tin!', 'danger')
+                return redirect(url_for('dang_ky_khach_hang'))
+            
+            if mat_khau != confirm_mat_khau:
+                flash('Mật khẩu xác nhận không khớp!', 'danger')
+                return redirect(url_for('dang_ky_khach_hang'))
+            
+            if len(mat_khau) < 6:
+                flash('Mật khẩu phải có ít nhất 6 ký tự!', 'danger')
+                return redirect(url_for('dang_ky_khach_hang'))
+            
+            # Kiểm tra trùng email hoặc SĐT
+            if KhachHang.query.filter_by(email=email).first():
+                flash('Email đã tồn tại!', 'danger')
+                return redirect(url_for('dang_ky_khach_hang'))
+            
+            if KhachHang.query.filter_by(so_dien_thoai=so_dien_thoai).first():
+                flash('Số điện thoại đã tồn tại!', 'danger')
+                return redirect(url_for('dang_ky_khach_hang'))
+            
+            # Tạo mã khách hàng
+            so_khach_hang = KhachHang.query.count() + 1
+            ma_khach_hang = f"KH{so_khach_hang:03d}"
+            
+            # Tạo khách hàng mới
+            khach_hang = KhachHang(
+                ma_khach_hang=ma_khach_hang,
+                ho_ten=ho_ten,
+                so_dien_thoai=so_dien_thoai,
+                email=email,
+                ngay_sinh=datetime.strptime(request.form.get('ngay_sinh'), '%Y-%m-%d').date() if request.form.get('ngay_sinh') else None,
+                gioi_tinh=request.form.get('gioi_tinh'),
+                dia_chi=request.form.get('dia_chi'),
+                cong_ty=request.form.get('cong_ty'),
+                loai_khach_hang=request.form.get('loai_khach_hang', 'ca_nhan')
+            )
+            khach_hang.set_password(mat_khau)
+            
+            db.session.add(khach_hang)
+            db.session.commit()
+            
+            flash('Đăng ký thành công! Vui lòng đăng nhập.', 'success')
+            return redirect(url_for('dang_nhap_khach_hang'))
+        
+        return render_template('khach_hang/dang_ky.html')
+    
+    @app.route('/dang-ky-nhanh', methods=['POST'])
+    def dang_ky_nhanh():
+        # Lấy dữ liệu từ form đăng ký nhanh
+        ho_ten = request.form.get('ho_ten')
+        so_dien_thoai = request.form.get('so_dien_thoai')
+        email = request.form.get('email')
+        mat_khau = request.form.get('mat_khau')
+        
+        # Validation cơ bản
+        if not all([ho_ten, so_dien_thoai, email, mat_khau]):
+            flash('Vui lòng điền đầy đủ thông tin!', 'danger')
+            return redirect(url_for('dang_nhap_khach_hang'))
+        
+        if len(mat_khau) < 6:
+            flash('Mật khẩu phải có ít nhất 6 ký tự!', 'danger')
+            return redirect(url_for('dang_nhap_khach_hang'))
+        
+        # Kiểm tra trùng email hoặc SĐT
+        if KhachHang.query.filter_by(email=email).first():
+            flash('Email đã tồn tại! Vui lòng dùng email khác.', 'danger')
+            return redirect(url_for('dang_nhap_khach_hang'))
+        
+        if KhachHang.query.filter_by(so_dien_thoai=so_dien_thoai).first():
+            flash('Số điện thoại đã tồn tại! Vui lòng dùng SĐT khác.', 'danger')
+            return redirect(url_for('dang_nhap_khach_hang'))
+        
+        # Tạo mã khách hàng
+        so_khach_hang = KhachHang.query.count() + 1
+        ma_khach_hang = f"KH{so_khach_hang:03d}"
+        
+        # Tạo khách hàng mới với thông tin cơ bản
+        khach_hang = KhachHang(
+            ma_khach_hang=ma_khach_hang,
+            ho_ten=ho_ten,
+            so_dien_thoai=so_dien_thoai,
+            email=email,
+            loai_khach_hang='ca_nhan'
+        )
+        khach_hang.set_password(mat_khau)
+        
+        db.session.add(khach_hang)
+        db.session.commit()
+        
+        # Tự động đăng nhập sau khi đăng ký thành công
+        login_user(khach_hang)
+        flash('🎉 Đăng ký thành công! Chào mừng bạn đến với PC Care!', 'success')
+        
+        return redirect(url_for('dashboard_khach_hang'))
+    
+    @app.route('/dang-xuat-khach-hang')
+    def dang_xuat_khach_hang():
+        logout_user()
+        flash('Đăng xuất thành công!', 'success')
+        return redirect(url_for('index'))
+    
+    @app.route('/dashboard-khach-hang')
+    @login_required
+    def dashboard_khach_hang():
+        # Kiểm tra xem là khách hàng hay admin
+        if current_user.__class__.__name__ == 'NhanVien':  # Là admin/nhân viên
+            return redirect(url_for('dashboard'))
+        
+        # Lấy thống kê cho khách hàng
+        so_don_hang = DonHang.query.filter_by(khach_hang_id=current_user.id).count()
+        tong_chi_ti = db.session.query(db.func.sum(DonHang.tong_tien)).filter_by(
+            khach_hang_id=current_user.id,
+            trang_thai_thanh_toan=TrangThaiThanhToan.DA_THANH_TOAN
+        ).scalar() or 0
+        
+        don_hang_gan_nhat = DonHang.query.filter_by(khach_hang_id=current_user.id).order_by(
+            DonHang.ngay_tiep_nhan.desc()
+        ).first()
+        
+        don_hang_moi = DonHang.query.filter_by(khach_hang_id=current_user.id).order_by(
+            DonHang.ngay_tiep_nhan.desc()
+        ).limit(5).all()
+        
+        return render_template('khach_hang/dashboard.html',
+                             so_don_hang=so_don_hang,
+                             tong_chi_ti=tong_chi_ti,
+                             don_hang_gan_nhat=don_hang_gan_nhat,
+                             don_hang_moi=don_hang_moi)
     
     return app
 

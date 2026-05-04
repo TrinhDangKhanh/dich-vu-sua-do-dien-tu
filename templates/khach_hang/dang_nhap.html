@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - PC Care</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(16, 185, 129, 0.9)),
+                        url('https://images.unsplash.com/photo-1587829741301-dc798b83a3b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-danger {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 15px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .login-header {
+                padding: 25px 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .login-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔧 PC Care</h1>
+            <p>Đăng nhập tài khoản khách hàng</p>
+        </div>
+        
+        <div class="login-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('dang_nhap_khach_hang') }}">
+                <div class="form-group">
+                    <label for="email">Email hoặc Số điện thoại</label>
+                    <input type="text" id="email" name="email" required 
+                           placeholder="Nhập email hoặc số điện thoại"
+                           value="{{ request.form.email or '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="mat_khau">Mật khẩu</label>
+                    <input type="password" id="mat_khau" name="mat_khau" required 
+                           placeholder="Nhập mật khẩu">
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    Đăng nhập
+                </button>
+            </form>
+            
+            <div class="divider">
+                <span>hoặc</span>
+            </div>
+            
+            <!-- Quick Registration Form -->
+            <form method="POST" action="{{ url_for('dang_ky_nhanh') }}" id="quick-register-form">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #374151; font-size: 16px; font-weight: 600;">
+                    🚀 Đăng ký nhanh
+                </h3>
+                
+                <div class="form-group">
+                    <label for="reg_ho_ten">Họ và tên *</label>
+                    <input type="text" id="reg_ho_ten" name="ho_ten" required 
+                           placeholder="Nhập họ và tên">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reg_email">Email *</label>
+                    <input type="email" id="reg_email" name="email" required 
+                           placeholder="Nhập email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reg_sdt">Số điện thoại *</label>
+                    <input type="tel" id="reg_sdt" name="so_dien_thoai" required 
+                           placeholder="Nhập số điện thoại">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reg_mat_khau">Mật khẩu (ít nhất 6 ký tự) *</label>
+                    <input type="password" id="reg_mat_khau" name="mat_khau" required 
+                           minlength="6" placeholder="Nhập mật khẩu">
+                </div>
+                
+                <button type="submit" class="btn-login" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
+                    🎉 Đăng ký ngay
+                </button>
+            </form>
+            
+            <div class="links" style="margin-top: 20px;">
+                <p style="text-align: center; color: #6b7280; font-size: 12px; margin-bottom: 10px;">
+                    Đăng ký tức thì - Bảo mật thông tin - Không spam
+                </p>
+                <p><a href="{{ url_for('dang_ky_khach_hang') }}">Đăng ký đầy đủ</a></p>
+                <br>
+                <p><a href="{{ url_for('dang_nhap') }}">Đăng nhập quản trị viên</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
