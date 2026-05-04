@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết đơn hàng {{ don_hang.ma_don_hang }} - PC Care{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Chi tiết đơn hàng</h1>
+                <p class="text-muted">Mã đơn: <strong>{{ don_hang.ma_don_hang }}</strong></p>
+            </div>
+            <div>
+                <a href="{{ url_for('danh_sach_don_hang') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+                <button class="btn btn-warning" onclick="capNhatTrangThai({{ don_hang.id }})">
+                    <i class="fas fa-edit"></i> Cập nhật trạng thái
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Thông tin khách hàng -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user"></i> Thông tin khách hàng
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <td class="text-muted" width="40%">Họ tên:</td>
+                        <td><strong>{{ don_hang.khach_hang.ho_ten }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">SĐT:</td>
+                        <td>{{ don_hang.khach_hang.so_dien_thoai }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Email:</td>
+                        <td>{{ don_hang.khach_hang.email or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Địa chỉ:</td>
+                        <td>{{ don_hang.khach_hang.dia_chi or '-' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Thông tin thiết bị -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-desktop"></i> Thông tin thiết bị
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td class="text-muted" width="40%">Tên thiết bị:</td>
+                                <td><strong>{{ don_hang.ten_thiet_bi }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Loại thiết bị:</td>
+                                <td>{{ don_hang.loai_thiet_bi.value }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Nhãn hiệu:</td>
+                                <td>{{ don_hang.nhan_hieu or '-' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td class="text-muted" width="40%">Model:</td>
+                                <td>{{ don_hang.model or '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Serial:</td>
+                                <td>{{ don_hang.serial_number or '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Mật khẩu:</td>
+                                <td>{{ '••••••••' if don_hang.mat_khau else '-' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6 class="text-muted">Mô tả lỗi:</h6>
+                    <div class="alert alert-light">
+                        {{ don_hang.mo_ta_loi }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Trạng thái và thanh toán -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle"></i> Trạng thái
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Trạng thái đơn hàng:</label>
+                    <div>
+                        {% if don_hang.trang_thai.value == 'Đang xử lý' %}
+                            <span class="badge bg-warning fs-6">{{ don_hang.trang_thai.value }}</span>
+                        {% elif don_hang.trang_thai.value == 'Chờ linh kiện' %}
+                            <span class="badge bg-info fs-6">{{ don_hang.trang_thai.value }}</span>
+                        {% elif don_hang.trang_thai.value == 'Đang sửa chữa' %}
+                            <span class="badge bg-primary fs-6">{{ don_hang.trang_thai.value }}</span>
+                        {% elif don_hang.trang_thai.value == 'Hoàn thành' %}
+                            <span class="badge bg-success fs-6">{{ don_hang.trang_thai.value }}</span>
+                        {% elif don_hang.trang_thai.value == 'Đã giao' %}
+                            <span class="badge bg-success fs-6">{{ don_hang.trang_thai.value }}</span>
+                        {% elif don_hang.trang_thai.value == 'Hủy' %}
+                            <span class="badge bg-danger fs-6">{{ don_hang.trang_thai.value }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">{{ don_hang.trang_thai.value }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted">Trạng thái thanh toán:</label>
+                    <div>
+                        {% if don_hang.trang_thai_thanh_toan.value == 'Đã thanh toán' %}
+                            <span class="badge bg-success fs-6">{{ don_hang.trang_thai_thanh_toan.value }}</span>
+                        {% elif don_hang.trang_thai_thanh_toan.value == 'Đã đặt cọc' %}
+                            <span class="badge bg-info fs-6">{{ don_hang.trang_thai_thanh_toan.value }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">{{ don_hang.trang_thai_thanh_toan.value }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted">Tổng tiền:</label>
+                    <h4 class="text-primary">{{ "{:,.0f}".format(don_hang.tong_tien or 0) }} VNĐ</h4>
+                </div>
+                
+                {% if don_hang.tien_dat_coc > 0 %}
+                <div class="mb-3">
+                    <label class="form-label text-muted">Tiền đặt cọc:</label>
+                    <h5 class="text-info">{{ "{:,.0f}".format(don_hang.tien_dat_coc) }} VNĐ</h5>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Thời gian xử lý -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clock"></i> Thời gian xử lý
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td class="text-muted" width="40%">Ngày tiếp nhận:</td>
+                                <td><strong>{{ don_hang.ngay_tiep_nhan.strftime('%d/%m/%Y %H:%M') }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Ngày hoàn thành:</td>
+                                <td>
+                                    {% if don_hang.ngay_hoan_thanh %}
+                                        <strong>{{ don_hang.ngay_hoan_thanh.strftime('%d/%m/%Y %H:%M') }}</strong>
+                                    {% else %}
+                                        <span class="text-muted">Chưa hoàn thành</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Ngày giao hàng:</td>
+                                <td>
+                                    {% if don_hang.ngay_giao_hang %}
+                                        <strong>{{ don_hang.ngay_giao_hang.strftime('%d/%m/%Y %H:%M') }}</strong>
+                                    {% else %}
+                                        <span class="text-muted">Chưa giao</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        {% if don_hang.ghi_chu_nhan_vien %}
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Ghi chú nhân viên:</label>
+                            <div class="alert alert-light">
+                                {{ don_hang.ghi_chu_nhan_vien }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if don_hang.ghi_chu_khach_hang %}
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Ghi chú khách hàng:</label>
+                            <div class="alert alert-light">
+                                {{ don_hang.ghi_chu_khach_hang }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal cập nhật trạng thái -->
+<div class="modal fade" id="capNhatTrangThaiModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cập nhật trạng thái đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('cap_nhat_trang_thai_don_hang', id=don_hang.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="trang_thai_moi" class="form-label">Trạng thái mới</label>
+                        <select class="form-select" name="trang_thai" id="trang_thai_moi" required>
+                            <option value="">Chọn trạng thái</option>
+                            <option value="Chờ tiếp nhận">Chờ tiếp nhận</option>
+                            <option value="Đang xử lý">Đang xử lý</option>
+                            <option value="Chờ linh kiện">Chờ linh kiện</option>
+                            <option value="Đang sửa chữa">Đang sửa chữa</option>
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            <option value="Đã giao">Đã giao</option>
+                            <option value="Hủy">Hủy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function capNhatTrangThai(donHangId) {
+    var modal = new bootstrap.Modal(document.getElementById('capNhatTrangThaiModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

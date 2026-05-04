@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Thêm linh kiện mới - PC Care{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Thêm linh kiện mới</h1>
+                <p class="text-muted">Tạo linh kiện mới cho kho</p>
+            </div>
+            <div>
+                <a href="{{ url_for('danh_sach_linh_kien') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="POST">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Thông tin linh kiện</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ten_linh_kien" class="form-label">Tên linh kiện *</label>
+                                <input type="text" class="form-control" id="ten_linh_kien" name="ten_linh_kien" required
+                                       placeholder="Ví dụ: RAM DDR4 8GB, SSD Samsung 256GB...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ma_linh_kien" class="form-label">Mã linh kiện</label>
+                                <input type="text" class="form-control" id="ma_linh_kien" name="ma_linh_kien"
+                                       placeholder="Ví dụ: RAM008, SSD256">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="so_luong_ton" class="form-label">Số lượng tồn kho *</label>
+                                <input type="number" class="form-control" id="so_luong_ton" name="so_luong_ton" 
+                                       required min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="gia_nhap" class="form-label">Giá nhập (VNĐ)</label>
+                                <input type="number" class="form-control" id="gia_nhap" name="gia_nhap" 
+                                       min="0" step="1000" placeholder="500000">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="gia_ban" class="form-label">Giá bán (VNĐ)</label>
+                                <input type="number" class="form-control" id="gia_ban" name="gia_ban" 
+                                       min="0" step="1000" placeholder="650000">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="nha_cung_cap" class="form-label">Nhà cung cấp</label>
+                        <input type="text" class="form-control" id="nha_cung_cap" name="nha_cung_cap"
+                               placeholder="Ví dụ: FPT, Digiworld, An Phát...">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="thong_so_ky_thuat" class="form-label">Thông số kỹ thuật</label>
+                        <textarea class="form-control" id="thong_so_ky_thuat" name="thong_so_ky_thuat" rows="3"
+                                  placeholder="Thông tin chi tiết về linh kiện: loại, tốc độ, dung lượng, thương hiệu..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Gợi ý</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Các linh kiện phổ biến:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-memory text-primary"></i> RAM DDR4 8GB</li>
+                        <li><i class="fas fa-hdd text-info"></i> SSD 256GB SATA</li>
+                        <li><i class="fas fa-hdd text-info"></i> SSD 512GB NVMe</li>
+                        <li><i class="fas fa-microchip text-warning"></i> CPU Intel Core i5</li>
+                        <li><i class="fas fa-microchip text-warning"></i> CPU AMD Ryzen 5</li>
+                        <li><i class="fas fa-tv text-success"></i> Màn hình Laptop 14"</li>
+                        <li><i class="fas fa-fan text-primary"></i> Quạt tản nhiệt</li>
+                        <li><i class="fas fa-battery-full text-success"></i> Pin Laptop</li>
+                    </ul>
+                    
+                    <hr>
+                    
+                    <h6>Mã linh kiện gợi ý:</h6>
+                    <ul class="list-unstyled small">
+                        <li>RAM - RAM008, RAM016</li>
+                        <li>SSD - SSD256, SSD512</li>
+                        <li>CPU - CPUI5, CPUR5</li>
+                        <li>MAN - MAN14, MAN15</li>
+                        <li>PIN - PIN6C, PIN9C</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{{ url_for('danh_sach_linh_kien') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Hủy
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu linh kiện
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

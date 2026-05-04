@@ -1,0 +1,238 @@
+{
+  "khach_hangs": [
+    {
+      "id": 1,
+      "ho_ten": "Nguyen Van An",
+      "so_dien_thoai": "0912345678",
+      "email": "an.nguyen@email.com",
+      "dia_chi": "Ha Noi",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 2,
+      "ho_ten": "Tran Thi Binh",
+      "so_dien_thoai": "0987654321",
+      "email": "binh.tran@email.com",
+      "dia_chi": "TP. Ho Chi Minh",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 3,
+      "ho_ten": "Le Van Cuong",
+      "so_dien_thoai": "0934567890",
+      "email": "cuong.le@email.com",
+      "dia_chi": "Da Nang",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 4,
+      "ho_ten": "Pham Thi Dung",
+      "so_dien_thoai": "0967890123",
+      "email": "dung.pham@email.com",
+      "dia_chi": "Hai Phong",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 5,
+      "ho_ten": "Hoang Van Em",
+      "so_dien_thoai": "0978901234",
+      "email": "em.hoang@email.com",
+      "dia_chi": "Can Tho",
+      "ngay_tao": "2026-05-04 14:03:50"
+    }
+  ],
+  "dich_vus": [
+    {
+      "id": 1,
+      "ten_dich_vu": "Cai dat Windows",
+      "mo_ta": "Cai dat Windows 10/11, driver va phan mem co ban",
+      "gia_ban": 200000,
+      "thoi_gian_bao_hanh": 1,
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 2,
+      "ten_dich_vu": "Ve sinh may tinh",
+      "mo_ta": "Ve sinh tong quat, tan nhiet, keo tan nhiet",
+      "gia_ban": 150000,
+      "thoi_gian_bao_hanh": 0,
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 3,
+      "ten_dich_vu": "Thay keo tan nhiet",
+      "mo_ta": "Thay keo tan nhiet cho CPU/GPU",
+      "gia_ban": 250000,
+      "thoi_gian_bao_hanh": 3,
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 4,
+      "ten_dich_vu": "Nang cap RAM",
+      "mo_ta": "Nang cap RAM laptop, PC",
+      "gia_ban": 100000,
+      "thoi_gian_bao_hanh": 36,
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 5,
+      "ten_dich_vu": "Thay SSD",
+      "mo_ta": "Thay SSD, cai dat he dieu hanh",
+      "gia_ban": 100000,
+      "thoi_gian_bao_hanh": 36,
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 6,
+      "ten_dich_vu": "Thay man hinh Laptop",
+      "mo_ta": "Thay man hinh LCD, LED cho laptop",
+      "gia_ban": 1500000,
+      "thoi_gian_bao_hanh": 6,
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 7,
+      "ten_dich_vu": "Sua chua Mainboard",
+      "mo_ta": "Sua chua cac loi mainboard, chipset",
+      "gia_ban": 500000,
+      "thoi_gian_bao_hanh": 3,
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 8,
+      "ten_dich_vu": "Cuu du lieu",
+      "mo_ta": "Cuu du lieu tu o cung hong, format",
+      "gia_ban": 800000,
+      "thoi_gian_bao_hanh": 0,
+      "ngay_tao": "2026-05-04 14:03:50"
+    }
+  ],
+  "linh_kiens": [
+    {
+      "id": 1,
+      "ten_linh_kien": "RAM DDR4 8GB",
+      "ma_linh_kien": "RAM8G01",
+      "so_luong_ton": 50,
+      "gia_nhap": 800000,
+      "gia_ban": 1200000,
+      "nha_cung_cap": "Kingston",
+      "thong_so_ky_thuat": "DDR4-3200",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 2,
+      "ten_linh_kien": "RAM DDR4 16GB",
+      "ma_linh_kien": "RAM16G01",
+      "so_luong_ton": 30,
+      "gia_nhap": 1500000,
+      "gia_ban": 2200000,
+      "nha_cung_cap": "Corsair",
+      "thong_so_ky_thuat": "DDR4-3200",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 3,
+      "ten_linh_kien": "SSD 240GB SATA",
+      "ma_linh_kien": "SSD24001",
+      "so_luong_ton": 25,
+      "gia_nhap": 600000,
+      "gia_ban": 950000,
+      "nha_cung_cap": "Samsung",
+      "thong_so_ky_thuat": "2.5 inch SATA",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 4,
+      "ten_linh_kien": "SSD 480GB SATA",
+      "ma_linh_kien": "SSD48001",
+      "so_luong_ton": 20,
+      "gia_nhap": 1000000,
+      "gia_ban": 1650000,
+      "nha_cung_cap": "Crucial",
+      "thong_so_ky_thuat": "2.5 inch SATA",
+      "ngay_tao": "2026-05-04 14:03:50"
+    },
+    {
+      "id": 5,
+      "ten_linh_kien": "Keo tan nhiet",
+      "ma_linh_kien": "GEL001",
+      "so_luong_ton": 100,
+      "gia_nhap": 50000,
+      "gia_ban": 100000,
+      "nha_cung_cap": "Arctic Silver",
+      "thong_so_ky_thuat": "Silicone thermal paste",
+      "ngay_tao": "2026-05-04 14:03:50"
+    }
+  ],
+  "don_hangs": [
+    {
+      "id": 1,
+      "ma_don_hang": "DH20240501001",
+      "khach_hang_id": 1,
+      "ten_thiet_bi": "Dell XPS 15",
+      "loai_thiet_bi": "Laptop",
+      "nhan_hieu": "Dell",
+      "model": "XPS 9570",
+      "serial_number": "",
+      "mat_khau": "",
+      "mo_ta_loi": "May cham cham, nong, can ve sinh va nang cap",
+      "trang_thai": "Dang xu ly",
+      "trang_thai_thanh_toan": "Chua thanh toan",
+      "tong_tien": 1350000,
+      "tien_dat_coc": 0,
+      "ngay_tiep_nhan": "2026-05-04 14:03:50",
+      "ngay_hoan_thanh": null,
+      "ngay_giao_hang": null,
+      "ghi_chu_nhan_vien": "",
+      "ghi_chu_khach_hang": ""
+    },
+    {
+      "id": 2,
+      "ma_don_hang": "DH20240501002",
+      "khach_hang_id": 2,
+      "ten_thiet_bi": "Macbook Pro 13\"",
+      "loai_thiet_bi": "Macbook",
+      "nhan_hieu": "Apple",
+      "model": "Macbook Pro 2020",
+      "serial_number": "",
+      "mat_khau": "",
+      "mo_ta_loi": "Man hinh bi soc, can thay man hinh moi",
+      "trang_thai": "Cho linh kien",
+      "trang_thai_thanh_toan": "Chua thanh toan",
+      "tong_tien": 3200000,
+      "tien_dat_coc": 0,
+      "ngay_tiep_nhan": "2026-05-04 14:03:50",
+      "ngay_hoan_thanh": null,
+      "ngay_giao_hang": null,
+      "ghi_chu_nhan_vien": "",
+      "ghi_chu_khach_hang": ""
+    },
+    {
+      "id": 3,
+      "ma_don_hang": "DH20240501003",
+      "khach_hang_id": 3,
+      "ten_thiet_bi": "PC Gaming",
+      "loai_thiet_bi": "PC Desktop",
+      "nhan_hieu": "Custom",
+      "model": "Gaming PC",
+      "serial_number": "",
+      "mat_khau": "",
+      "mo_ta_loi": "May khong len nguon, can kiem tra main",
+      "trang_thai": "Hoan thanh",
+      "trang_thai_thanh_toan": "Chua thanh toan",
+      "tong_tien": 500000,
+      "tien_dat_coc": 0,
+      "ngay_tiep_nhan": "2026-05-04 14:03:50",
+      "ngay_hoan_thanh": "2026-05-04 14:03:50",
+      "ngay_giao_hang": null,
+      "ghi_chu_nhan_vien": "",
+      "ghi_chu_khach_hang": ""
+    }
+  ],
+  "next_id": {
+    "khach_hang": 6,
+    "dich_vu": 9,
+    "linh_kien": 6,
+    "don_hang": 4
+  }
+}

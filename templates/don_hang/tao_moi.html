@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo đơn hàng mới - PC Care{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Tạo đơn hàng mới</h1>
+                <p class="text-muted">Tiếp nhận thiết bị mới của khách hàng</p>
+            </div>
+            <div>
+                <a href="{{ url_for('danh_sach_don_hang') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="POST" id="formTaoDonHang">
+    <div class="row">
+        <!-- Thông tin khách hàng -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user"></i> Thông tin khách hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="ho_ten" class="form-label">Họ tên *</label>
+                            <input type="text" class="form-control" id="ho_ten" name="ho_ten" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="so_dien_thoai" class="form-label">Số điện thoại *</label>
+                            <input type="tel" class="form-control" id="so_dien_thoai" name="so_dien_thoai" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="col-12">
+                            <label for="dia_chi" class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" id="dia_chi" name="dia_chi" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Thông tin thiết bị -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-desktop"></i> Thông tin thiết bị
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="ten_thiet_bi" class="form-label">Tên thiết bị *</label>
+                            <input type="text" class="form-control" id="ten_thiet_bi" name="ten_thiet_bi" required 
+                                   placeholder="Ví dụ: Laptop Dell XPS 13">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="loai_thiet_bi" class="form-label">Loại thiết bị *</label>
+                            <select class="form-select" id="loai_thiet_bi" name="loai_thiet_bi" required>
+                                <option value="">Chọn loại thiết bị</option>
+                                <option value="Laptop">Laptop</option>
+                                <option value="PC Desktop">PC Desktop</option>
+                                <option value="Macbook">Macbook</option>
+                                <option value="Máy in">Máy in</option>
+                                <option value="Màn hình">Màn hình</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nhan_hieu" class="form-label">Nhãn hiệu</label>
+                            <input type="text" class="form-control" id="nhan_hieu" name="nhan_hieu" 
+                                   placeholder="Ví dụ: Dell, HP, Asus...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="model" class="form-label">Model</label>
+                            <input type="text" class="form-control" id="model" name="model" 
+                                   placeholder="Ví dụ: XPS 13, Pavilion...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="serial_number" class="form-label">Serial Number</label>
+                            <input type="text" class="form-control" id="serial_number" name="serial_number">
+                        </div>
+                        <div class="col-12">
+                            <label for="mat_khau" class="form-label">Mật khẩu máy tính</label>
+                            <input type="password" class="form-control" id="mat_khau" name="mat_khau" 
+                                   placeholder="Để trống nếu khách hàng không cung cấp">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mô tả lỗi -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Mô tả lỗi *
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <textarea class="form-control" id="mo_ta_loi" name="mo_ta_loi" rows="4" required 
+                              placeholder="Mô tả chi tiết tình trạng của thiết bị, lỗi gặp phải, và yêu cầu của khách hàng..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Buttons -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{{ url_for('danh_sach_don_hang') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Hủy
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Tạo đơn hàng
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('formTaoDonHang').addEventListener('submit', function(e) {
+    var hoTen = document.getElementById('ho_ten').value.trim();
+    var soDienThoai = document.getElementById('so_dien_thoai').value.trim();
+    var tenThietBi = document.getElementById('ten_thiet_bi').value.trim();
+    var loaiThietBi = document.getElementById('loai_thiet_bi').value;
+    var moTaLoi = document.getElementById('mo_ta_loi').value.trim();
+    
+    if (!hoTen || !soDienThoai || !tenThietBi || !loaiThietBi || !moTaLoi) {
+        e.preventDefault();
+        alert('Vui lòng điền đầy đủ các trường bắt buộc!');
+        return false;
+    }
+    
+    // Kiểm tra số điện thoại
+    var phoneRegex = /^[0-9]{10,11}$/;
+    if (!phoneRegex.test(soDienThoai)) {
+        e.preventDefault();
+        alert('Số điện thoại không hợp lệ!');
+        return false;
+    }
+});
+</script>
+{% endblock %}

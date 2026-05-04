@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Linh kiện - PC Care{% endblock %}
+
+{% block content %}
+<div class="top">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div>Linh kiện</div>
+            <div style="font-size: 14px; font-weight: 400; color: #6b7280; margin-top: 5px;">
+                Quản lý kho linh kiện
+            </div>
+        </div>
+        <a href="{{ url_for('tao_linh_kien') }}" class="btn btn-primary">
+            ➕ Thêm linh kiện mới
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <table>
+        <thead>
+            <tr>
+                <th>Mã linh kiện</th>
+                <th>Tên linh kiện</th>
+                <th>Tồn kho</th>
+                <th>Giá nhập</th>
+                <th>Giá bán</th>
+                <th>Nhà cung cấp</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lk in linh_kien %}
+            <tr>
+                <td><strong>{{ lk.ma_linh_kien or '-' }}</strong></td>
+                <td>{{ lk.ten_linh_kien }}</td>
+                <td>
+                    {% if lk.so_luong_ton > 10 %}
+                        <span class="tag green">{{ lk.so_luong_ton }}</span>
+                    {% elif lk.so_luong_ton > 5 %}
+                        <span class="tag orange">{{ lk.so_luong_ton }}</span>
+                    {% else %}
+                        <span class="tag red">{{ lk.so_luong_ton }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ "{:,.0f}".format(lk.gia_nhap or 0) }} VNĐ</td>
+                <td>{{ "{:,.0f}".format(lk.gia_ban or 0) }} VNĐ</td>
+                <td>{{ lk.nha_cung_cap or '-' }}</td>
+                <td>
+                    <a href="#" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; margin-right: 5px;">
+                        👁️
+                    </a>
+                    <a href="#" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px; margin-right: 5px;">
+                        ✏️
+                    </a>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;">
+                        ➕
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

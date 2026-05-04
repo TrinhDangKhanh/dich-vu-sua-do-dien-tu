@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Dịch vụ - PC Care{% endblock %}
+
+{% block content %}
+<div class="top">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div>Dịch vụ sửa chữa</div>
+            <div style="font-size: 14px; font-weight: 400; color: #6b7280; margin-top: 5px;">
+                Quản lý danh mục dịch vụ
+            </div>
+        </div>
+        <a href="{{ url_for('tao_dich_vu') }}" class="btn btn-primary">
+            ➕ Thêm dịch vụ mới
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <table>
+        <thead>
+            <tr>
+                <th>Tên dịch vụ</th>
+                <th>Mô tả</th>
+                <th>Giá bán</th>
+                <th>Bảo hành</th>
+                <th>Ngày tạo</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dv in dich_vu %}
+            <tr>
+                <td><strong>{{ dv.ten_dich_vu }}</strong></td>
+                <td>{{ dv.mo_ta[:100] if dv.mo_ta else '' }}{% if dv.mo_ta and dv.mo_ta|length > 100 %}...{% endif %}</td>
+                <td>{{ "{:,.0f}".format(dv.gia_ban) }} VNĐ</td>
+                <td>
+                    {% if dv.thoi_gian_bao_hanh > 0 %}
+                        <span class="tag green">{{ dv.thoi_gian_bao_hanh }} tháng</span>
+                    {% else %}
+                        <span class="tag gray">Không</span>
+                    {% endif %}
+                </td>
+                <td>{{ dv.ngay_tao.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <a href="#" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; margin-right: 5px;">
+                        👁️
+                    </a>
+                    <a href="#" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px; margin-right: 5px;">
+                        ✏️
+                    </a>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;">
+                        🗑️
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

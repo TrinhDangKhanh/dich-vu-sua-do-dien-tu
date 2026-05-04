@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Đơn hàng - PC Care{% endblock %}
+
+{% block content %}
+<div class="top">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div>Đơn hàng</div>
+            <div style="font-size: 14px; font-weight: 400; color: #6b7280; margin-top: 5px;">
+                Quản lý tất cả đơn hàng sửa chữa
+            </div>
+        </div>
+        <a href="{{ url_for('tao_don_hang') }}" class="btn btn-primary">
+            ➕ Tạo đơn hàng mới
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="content" style="margin-bottom: 22px;">
+    <form method="GET" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+        <div>
+            <label for="trang_thai" style="display: block; margin-bottom: 5px; font-weight: 500; color: #374151; font-size: 14px;">Trạng thái</label>
+            <select id="trang_thai" name="trang_thai" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                <option value="">Tất cả trạng thái</option>
+                <option value="Chờ tiếp nhận" {{ 'selected' if trang_thai == 'Chờ tiếp nhận' }}>Chờ tiếp nhận</option>
+                <option value="Đang xử lý" {{ 'selected' if trang_thai == 'Đang xử lý' }}>Đang xử lý</option>
+                <option value="Chờ linh kiện" {{ 'selected' if trang_thai == 'Chờ linh kiện' }}>Chờ linh kiện</option>
+                <option value="Đang sửa chữa" {{ 'selected' if trang_thai == 'Đang sửa chữa' }}>Đang sửa chữa</option>
+                <option value="Hoàn thành" {{ 'selected' if trang_thai == 'Hoàn thành' }}>Hoàn thành</option>
+                <option value="Đã giao" {{ 'selected' if trang_thai == 'Đã giao' }}>Đã giao</option>
+                <option value="Hủy" {{ 'selected' if trang_thai == 'Hủy' }}>Hủy</option>
+            </select>
+        </div>
+        <div>
+            <label for="search" style="display: block; margin-bottom: 5px; font-weight: 500; color: #374151; font-size: 14px;">Tìm kiếm</label>
+            <input type="text" id="search" name="search" placeholder="Mã đơn, khách hàng, thiết bị..." 
+                   style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-primary">
+                🔍 Tìm kiếm
+            </button>
+            <a href="{{ url_for('danh_sach_don_hang') }}" class="btn btn-secondary">
+                🔄 Reset
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Orders table -->
+<div class="content">
+    <table>
+        <thead>
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Khách hàng</th>
+                <th>Thiết bị</th>
+                <th>Mô tả lỗi</th>
+                <th>Trạng thái</th>
+                <th>Thanh toán</th>
+                <th>Ngày tiếp nhận</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for don in don_hang.items %}
+            <tr>
+                <td><strong>{{ don.ma_don_hang }}</strong></td>
+                <td>
+                    <div>
+                        <strong>{{ don.khach_hang.ho_ten }}</strong>
+                        <br>
+                        <small style="color: #6b7280;">{{ don.khach_hang.so_dien_thoai }}</small>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <strong>{{ don.ten_thiet_bi }}</strong>
+                        <br>
+                        <small style="color: #6b7280;">{{ don.loai_thiet_bi.value }}</small>
+                    </div>
+                </td>
+                <td>
+                    <small>{{ don.mo_ta_loi[:50] }}{% if don.mo_ta_loi|length > 50 %}...{% endif %}</small>
+                </td>
+                <td>
+                    {% if don.trang_thai.value == 'Đang xử lý' %}
+                        <span class="tag orange">{{ don.trang_thai.value }}</span>
+                    {% elif don.trang_thai.value == 'Chờ linh kiện' %}
+                        <span class="tag blue">{{ don.trang_thai.value }}</span>
+                    {% elif don.trang_thai.value == 'Đang sửa chữa' %}
+                        <span class="tag blue">{{ don.trang_thai.value }}</span>
+                    {% elif don.trang_thai.value == 'Hoàn thành' %}
+                        <span class="tag green">{{ don.trang_thai.value }}</span>
+                    {% elif don.trang_thai.value == 'Đã giao' %}
+                        <span class="tag green">{{ don.trang_thai.value }}</span>
+                    {% elif don.trang_thai.value == 'Hủy' %}
+                        <span class="tag red">{{ don.trang_thai.value }}</span>
+                    {% else %}
+                        <span class="tag gray">{{ don.trang_thai.value }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if don.trang_thai_thanh_toan.value == 'Đã thanh toán' %}
+                        <span class="tag green">{{ don.trang_thai_thanh_toan.value }}</span>
+                    {% elif don.trang_thai_thanh_toan.value == 'Đã đặt cọc' %}
+                        <span class="tag blue">{{ don.trang_thai_thanh_toan.value }}</span>
+                    {% else %}
+                        <span class="tag gray">{{ don.trang_thai_thanh_toan.value }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ don.ngay_tiep_nhan.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <a href="{{ url_for('chi_tiet_don_hang', id=don.id) }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; margin-right: 5px;">
+                        👁️
+                    </a>
+                    <button class="btn btn-secondary" onclick="capNhatTrangThai({{ don.id }})" style="padding: 6px 12px; font-size: 12px;">
+                        Edit
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    {% if don_hang.pages > 1 %}
+    <div class="pagination">
+        {% if don_hang.has_prev %}
+            <a href="{{ url_for('danh_sach_don_hang', page=don_hang.prev_num, trang_thai=trang_thai) }}">‹</a>
+        {% endif %}
+        
+        {% for page_num in don_hang.iter_pages() %}
+            {% if page_num %}
+                {% if page_num != don_hang.page %}
+                    <a href="{{ url_for('danh_sach_don_hang', page=page_num, trang_thai=trang_thai) }}">{{ page_num }}</a>
+                {% else %}
+                    <span class="current">{{ page_num }}</span>
+                {% endif %}
+            {% else %}
+                <span>...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if don_hang.has_next %}
+            <a href="{{ url_for('danh_sach_don_hang', page=don_hang.next_num, trang_thai=trang_thai) }}">›</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Simple Modal for status update -->
+<div id="statusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 500px;">
+        <h3 style="margin-bottom: 20px;">Cập nhật trạng thái đơn hàng</h3>
+        <form method="POST" id="formCapNhatTrangThai">
+            <input type="hidden" name="don_hang_id" id="don_hang_id">
+            <div class="form-group">
+                <label for="trang_thai_moi">Trạng thái mới</label>
+                <select name="trang_thai" id="trang_thai_moi" required style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                    <option value="">Chọn trạng thái</option>
+                    <option value="Chờ tiếp nhận">Chờ tiếp nhận</option>
+                    <option value="Đang xử lý">Đang xử lý</option>
+                    <option value="Chờ linh kiện">Chờ linh kiện</option>
+                    <option value="Đang sửa chữa">Đang sửa chữa</option>
+                    <option value="Hoàn thành">Hoàn thành</option>
+                    <option value="Đã giao">Đã giao</option>
+                    <option value="Hủy">Hủy</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" onclick="closeModal()" class="btn btn-secondary">Hủy</button>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function capNhatTrangThai(donHangId) {
+    document.getElementById('don_hang_id').value = donHangId;
+    document.getElementById('statusModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('statusModal').style.display = 'none';
+}
+
+document.getElementById('formCapNhatTrangThai').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    var donHangId = formData.get('don_hang_id');
+    
+    fetch('/don-hang/' + donHangId + '/cap-nhat-trang-thai', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Có lỗi xảy ra: ' + data.message);
+        }
+    })
+    .catch(function(error) {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi cập nhật trạng thái');
+    });
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    var modal = document.getElementById('statusModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+</script>
+{% endblock %}

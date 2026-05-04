@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Báo cáo - PC Care{% endblock %}
+
+{% block content %}
+<div class="top">
+    <div>
+        <div>Báo cáo</div>
+        <div style="font-size: 14px; font-weight: 400; color: #6b7280; margin-top: 5px;">
+            Thống kê và phân tích hoạt động kinh doanh
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="content" style="margin-bottom: 22px;">
+    <form method="GET" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+        <div>
+            <label for="thang" style="display: block; margin-bottom: 5px; font-weight: 500; color: #374151; font-size: 14px;">Tháng</label>
+            <select id="thang" name="thang" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                {% for month in range(1, 13) %}
+                    <option value="{{ month }}" {{ 'selected' if month == thang }}>
+                        Tháng {{ month }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="nam" style="display: block; margin-bottom: 5px; font-weight: 500; color: #374151; font-size: 14px;">Năm</label>
+            <select id="nam" name="nam" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                {% for year in range(2020, 2026) %}
+                    <option value="{{ year }}" {{ 'selected' if year == nam }}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-primary">
+                Lọc
+            </button>
+            <a href="{{ url_for('bao_cao') }}" class="btn btn-secondary">
+                Reset
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Statistics Cards -->
+<div class="box-group">
+    <div class="box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+        <h3>{{ "{:,.0f}".format(doanh_thu) }} VNĐ</h3>
+        <p>Doanh thu</p>
+    </div>
+    
+    <div class="box" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+        <h3>{{ thong_ke_trang_thai|sum(attribute='_2') if thong_ke_trang_thai else 0 }}</h3>
+        <p>Tổng đơn hàng</p>
+    </div>
+    
+    <div class="box" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+        <h3>
+            {% for trang_thai, so_luong in thong_ke_trang_thai %}
+                {% if trang_thai.value == 'Hoàn thành' %}
+                    {{ so_luong }}
+                {% endif %}
+            {% endfor %}
+        </h3>
+        <p>Hoàn thành</p>
+    </div>
+    
+    <div class="box" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+        <h3>{{ top_dich_vu|length }}</h3>
+        <p>Dịch vụ sử dụng</p>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 22px;">
+    <!-- Trạng thái đơn hàng -->
+    <div class="content">
+        <h2>Thống kê đơn hàng theo trạng thái</h2>
+        {% if thong_ke_trang_thai %}
+            {% for trang_thai, so_luong in thong_ke_trang_thai %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <strong>{{ trang_thai.value }}</strong>
+                </div>
+                <div style="display: flex; align-items-center; gap: 10px;">
+                    <div style="width: 100px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                        <div style="width: 50%; height: 100%; background: #3b82f6;"></div>
+                    </div>
+                    <span class="tag blue">{{ so_luong }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #6b7280;">Không có dữ liệu trong kỳ này</p>
+        {% endif %}
+    </div>
+    
+    <!-- Top dịch vụ -->
+    <div class="content">
+        <h2>Top dịch vụ được sử dụng nhiều nhất</h2>
+        {% if top_dich_vu %}
+            {% for dich_vu, so_luong in top_dich_vu %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <strong>{{ dich_vu }}</strong>
+                </div>
+                <div style="display: flex; align-items-center; gap: 10px;">
+                    <div style="width: 100px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                        <div style="width: 60%; height: 100%; background: #10b981;"></div>
+                    </div>
+                    <span class="tag green">{{ so_luong }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #6b7280;">Không có dữ liệu trong kỳ này</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Biểu đồ Thu Chi -->
+<div class="content" style="margin-bottom: 22px;">
+    <h2>Biểu đồ Thu Chi</h2>
+    <div style="padding: 20px; background: #f9fafb; border-radius: 12px;">
+        <canvas id="thuChiChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Export buttons -->
+<div class="content">
+    <h2>Xuất báo cáo</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <button class="btn btn-success" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            Xuất Excel
+        </button>
+        <button class="btn btn-danger" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            Xuất PDF
+        </button>
+        <button class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            In báo cáo
+        </button>
+        <button class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            Gửi email
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Biểu đồ Thu Chi
+const canvas = document.getElementById('thuChiChart');
+const ctx = canvas.getContext('2d');
+
+// Dữ liệu mẫu cho biểu đồ thu chi
+const doanhThuData = [12000000, 15000000, 18000000, 14000000, 22000000, {{ doanh_thu or 20000000 }}];
+const chiPhiData = [8000000, 9000000, 11000000, 8500000, 13000000, 12000000];
+const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'];
+
+// Vẽ biểu đồ đơn giản bằng Canvas API
+function drawChart() {
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Xóa canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Thiết lập
+    const padding = 40;
+    const chartWidth = width - padding * 2;
+    const chartHeight = height - padding * 2;
+    
+    // Tìm giá trị lớn nhất
+    let maxValue = 0;
+    doanhThuData.forEach(value => {
+        if (value > maxValue) maxValue = value;
+    });
+    chiPhiData.forEach(value => {
+        if (value > maxValue) maxValue = value;
+    });
+    
+    // Vẽ trục
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.lineWidth = 1;
+    
+    // Trục X
+    ctx.beginPath();
+    ctx.moveTo(padding, height - padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.stroke();
+    
+    // Trục Y
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.stroke();
+    
+    // Vẽ các cột
+    const barWidth = chartWidth / (labels.length * 2 + labels.length);
+    const groupWidth = barWidth * 2;
+    
+    labels.forEach((label, index) => {
+        const x = padding + index * (groupWidth + barWidth) + barWidth;
+        
+        // Vẽ nhãn trục X
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x + groupWidth / 2, height - padding + 20);
+        
+        // Vẽ cột doanh thu
+        const doanhThuValue = doanhThuData[index];
+        const doanhThuHeight = (doanhThuValue / maxValue) * chartHeight;
+        const doanhThuX = x;
+        const doanhThuY = height - padding - doanhThuHeight;
+        
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+        ctx.fillRect(doanhThuX, doanhThuY, barWidth - 2, doanhThuHeight);
+        
+        // Vẽ giá trị trên cột
+        ctx.fillStyle = '#374151';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(formatNumber(doanhThuValue), doanhThuX + barWidth / 2, doanhThuY - 5);
+        
+        // Vẽ cột chi phí
+        const chiPhiValue = chiPhiData[index];
+        const chiPhiHeight = (chiPhiValue / maxValue) * chartHeight;
+        const chiPhiX = x + barWidth;
+        const chiPhiY = height - padding - chiPhiHeight;
+        
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+        ctx.fillRect(chiPhiX, chiPhiY, barWidth - 2, chiPhiHeight);
+        
+        // Vẽ giá trị trên cột
+        ctx.fillStyle = '#374151';
+        ctx.fillText(formatNumber(chiPhiValue), chiPhiX + barWidth / 2, chiPhiY - 5);
+    });
+    
+    // Vẽ legend
+    let legendX = width - 150;
+    
+    // Doanh thu
+    ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+    ctx.fillRect(legendX, padding, 15, 15);
+    ctx.fillStyle = '#374151';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Doanh thu', legendX + 20, padding + 12);
+    
+    // Chi phí
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+    ctx.fillRect(legendX, padding + 25, 15, 15);
+    ctx.fillStyle = '#374151';
+    ctx.fillText('Chi phí', legendX + 20, padding + 37);
+}
+
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(0) + 'K';
+    }
+    return num.toString();
+}
+
+// Vẽ biểu đồ khi tải trang
+window.addEventListener('load', drawChart);
+
+// Vẽ lại khi thay đổi kích thước
+window.addEventListener('resize', drawChart);
+</script>
+{% endblock %}

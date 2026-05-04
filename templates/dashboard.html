@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Tổng quan - PC Care{% endblock %}
+
+{% block content %}
+<div class="top">
+    Tổng quan
+    <div style="font-size: 14px; font-weight: 400; color: #6b7280; margin-top: 5px;">
+        Chào mừng trở lại, {{ current_user.ho_ten or current_user.tai_khoan }}!
+    </div>
+</div>
+
+<!-- Thống kê cards -->
+<div class="box-group">
+    <div class="box">
+        <h3>📋 Tổng đơn hàng</h3>
+        <h2>{{ tong_don_hang }}</h2>
+    </div>
+    
+    <div class="box">
+        <h3>🔧 Đang xử lý</h3>
+        <h2>{{ don_hang_dang_xu_ly }}</h2>
+    </div>
+    
+    <div class="box">
+        <h3>📦 Chờ linh kiện</h3>
+        <h2>{{ don_hang_cho_lin_kien }}</h2>
+    </div>
+    
+    <div class="box">
+        <h3>✅ Hoàn thành</h3>
+        <h2>{{ don_hang_hoan_thanh }}</h2>
+    </div>
+</div>
+
+<!-- Doanh thu và đơn hàng gần đây -->
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 22px; margin-bottom: 22px;">
+    <div class="content">
+        <h2>Doanh thu tháng này</h2>
+        <div style="font-size: 28px; color: #3b82f6; font-weight: 800; margin: 20px 0;">
+            {{ "{:,.0f}".format(doanh_thu_thang) }} VNĐ
+        </div>
+        <p style="color: #6b7280; font-size: 14px; margin: 0;">
+            Tổng doanh thu từ các đơn hàng đã thanh toán
+        </p>
+    </div>
+    
+    <div class="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Đơn hàng gần đây</h2>
+            <a href="{{ url_for('danh_sach_don_hang') }}" class="btn btn-primary">
+                Xem tất cả
+            </a>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Thiết bị</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tiếp nhận</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for don in don_hang_gan_day %}
+                <tr>
+                    <td><strong>{{ don.ma_don_hang }}</strong></td>
+                    <td>{{ don.khach_hang.ho_ten }}</td>
+                    <td>{{ don.ten_thiet_bi }}</td>
+                    <td>
+                        {% if don.trang_thai.value == 'Đang xử lý' %}
+                            <span class="tag blue">{{ don.trang_thai.value }}</span>
+                        {% elif don.trang_thai.value == 'Chờ linh kiện' %}
+                            <span class="tag orange">{{ don.trang_thai.value }}</span>
+                        {% elif don.trang_thai.value == 'Hoàn thành' %}
+                            <span class="tag green">{{ don.trang_thai.value }}</span>
+                        {% elif don.trang_thai.value == 'Hủy' %}
+                            <span class="tag red">{{ don.trang_thai.value }}</span>
+                        {% else %}
+                            <span class="tag gray">{{ don.trang_thai.value }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ don.ngay_tiep_nhan.strftime('%d/%m/%Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Quick actions -->
+<div class="content">
+    <h2>Thao tác nhanh</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <a href="{{ url_for('tao_don_hang') }}" class="btn btn-primary" style="text-align: center;">
+            ➕ Tạo đơn hàng mới
+        </a>
+        <a href="{{ url_for('danh_sach_don_hang', trang_thai='Đang xử lý') }}" class="btn btn-secondary" style="text-align: center;">
+            🔧 Đơn đang xử lý
+        </a>
+        <a href="{{ url_for('danh_sach_khach_hang') }}" class="btn btn-secondary" style="text-align: center;">
+            👥 Quản lý khách hàng
+        </a>
+        <a href="{{ url_for('bao_cao') }}" class="btn btn-success" style="text-align: center;">
+            📊 Xem báo cáo
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PC Care Admin{% endblock %}</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+        body{
+            display:flex;
+            background:#eef1f5;
+            color:#111827;
+        }
+
+        /* MENU */
+        .sidebar{
+            width:250px;
+            height:100vh;
+            background:#0f172a;
+            padding:20px;
+            color:white;
+            position:fixed;
+            left:0;
+            top:0;
+            overflow-y:auto;
+        }
+
+        .logo{
+            font-size:18px;
+            font-weight:800;
+            color:#3b82f6;
+            margin-bottom:28px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .menu button{
+            width:100%;
+            padding:13px 14px;
+            margin-bottom:10px;
+            border:none;
+            border-radius:12px;
+            background:none;
+            color:#e5e7eb;
+            text-align:left;
+            font-size:14px;
+            font-weight:500;
+            cursor:pointer;
+            transition:all 0.3s ease;
+        }
+
+        .menu button:hover{
+            background:#1e293b;
+        }
+
+        .menu .active{
+            background:#3b82f6;
+            color:white;
+        }
+
+        /* RIGHT */
+        .main{
+            flex:1;
+            margin-left:250px;
+            padding:28px;
+            min-height:100vh;
+        }
+
+        .top{
+            background:white;
+            padding:22px 26px;
+            border-radius:16px;
+            font-size:20px;
+            font-weight:800;
+            margin-bottom:22px;
+            box-shadow:0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .content{
+            background:white;
+            padding:25px;
+            border-radius:16px;
+            box-shadow:0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .content h2{
+            font-size:16px;
+            font-weight:700;
+            margin-bottom:10px;
+            color:#374151;
+        }
+
+        .box-group{
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+            gap:18px;
+            margin-bottom:22px;
+        }
+
+        .box{
+            background:white;
+            padding:24px;
+            border-radius:16px;
+            text-align:center;
+            box-shadow:0 1px 3px rgba(0,0,0,0.1);
+            transition:transform 0.2s ease;
+        }
+
+        .box:hover{
+            transform:translateY(-2px);
+        }
+
+        .box h3{
+            font-size:14px;
+            margin-bottom:10px;
+            color:#6b7280;
+        }
+
+        .box h2{
+            font-size:34px;
+            color:#3b82f6;
+            font-weight:800;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:14px;
+        }
+
+        th,td{
+            padding:12px;
+            border-bottom:1px solid #e5e7eb;
+            text-align:left;
+        }
+
+        th{
+            font-size:12px;
+            color:#6b7280;
+            font-weight:600;
+            background:#f9fafb;
+        }
+
+        td{
+            font-size:14px;
+        }
+
+        .tag{
+            padding:6px 10px;
+            border-radius:8px;
+            font-size:12px;
+            font-weight:600;
+            display:inline-block;
+        }
+
+        .blue{background:#dbeafe;color:#2563eb;}
+        .green{background:#dcfce7;color:#15803d;}
+        .orange{background:#ffedd5;color:#ea580c;}
+        .red{background:#fee2e2;color:#dc2626;}
+        .gray{background:#f3f4f6;color:#6b7280;}
+
+        .card{
+            background:#f8fafc;
+            padding:16px;
+            border-radius:12px;
+            margin-bottom:15px;
+            border-left:4px solid #3b82f6;
+        }
+
+        .btn{
+            padding:10px 20px;
+            border:none;
+            border-radius:8px;
+            font-size:14px;
+            font-weight:500;
+            cursor:pointer;
+            transition:all 0.3s ease;
+            text-decoration:none;
+            display:inline-block;
+        }
+
+        .btn-primary{
+            background:#3b82f6;
+            color:white;
+        }
+
+        .btn-primary:hover{
+            background:#2563eb;
+        }
+
+        .btn-secondary{
+            background:#6b7280;
+            color:white;
+        }
+
+        .btn-secondary:hover{
+            background:#4b5563;
+        }
+
+        .btn-success{
+            background:#10b981;
+            color:white;
+        }
+
+        .btn-success:hover{
+            background:#059669;
+        }
+
+        .btn-danger{
+            background:#ef4444;
+            color:white;
+        }
+
+        .btn-danger:hover{
+            background:#dc2626;
+        }
+
+        .form-group{
+            margin-bottom:20px;
+        }
+
+        .form-group label{
+            display:block;
+            margin-bottom:5px;
+            font-weight:500;
+            color:#374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea{
+            width:100%;
+            padding:10px;
+            border:1px solid #d1d5db;
+            border-radius:8px;
+            font-size:14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus{
+            outline:none;
+            border-color:#3b82f6;
+            box-shadow:0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .alert{
+            padding:12px 16px;
+            border-radius:8px;
+            margin-bottom:20px;
+        }
+
+        .alert-success{
+            background:#dcfce7;
+            color:#15803d;
+            border-left:4px solid #10b981;
+        }
+
+        .alert-danger{
+            background:#fee2e2;
+            color:#dc2626;
+            border-left:4px solid #ef4444;
+        }
+
+        .alert-warning{
+            background:#ffedd5;
+            color:#ea580c;
+            border-left:4px solid #f59e0b;
+        }
+
+        .pagination{
+            display:flex;
+            gap:10px;
+            justify-content:center;
+            margin-top:20px;
+        }
+
+        .pagination a,
+        .pagination span{
+            padding:8px 12px;
+            border:1px solid #d1d5db;
+            border-radius:6px;
+            text-decoration:none;
+            color:#374151;
+        }
+
+        .pagination a:hover{
+            background:#f3f4f6;
+        }
+
+        .pagination .current{
+            background:#3b82f6;
+            color:white;
+            border-color:#3b82f6;
+        }
+
+        .user-info{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:10px;
+            background:#1e293b;
+            border-radius:8px;
+            margin-top:20px;
+        }
+
+        .user-avatar{
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            background:#3b82f6;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-weight:600;
+        }
+
+        @media (max-width: 768px){
+            .sidebar{
+                width:200px;
+            }
+            
+            .main{
+                margin-left:200px;
+            }
+            
+            .box-group{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media (max-width: 640px){
+            .sidebar{
+                transform:translateX(-100%);
+                transition:transform 0.3s ease;
+            }
+            
+            .sidebar.active{
+                transform:translateX(0);
+            }
+            
+            .main{
+                margin-left:0;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span>🔧</span>
+            <span>PC Care Admin</span>
+        </div>
+
+        <div class="menu">
+            <a href="{{ url_for('dashboard') }}" style="text-decoration: none;">
+                <button class="{% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    🏠 Tổng quan
+                </button>
+            </a>
+            
+            <a href="{{ url_for('danh_sach_don_hang') }}" style="text-decoration: none;">
+                <button class="{% if request.endpoint == 'danh_sach_don_hang' or request.endpoint == 'tao_don_hang' or request.endpoint == 'chi_tiet_don_hang' %}active{% endif %}">
+                    📋 Đơn hàng
+                </button>
+            </a>
+            
+            <a href="{{ url_for('danh_sach_khach_hang') }}" style="text-decoration: none;">
+                <button class="{% if request.endpoint == 'danh_sach_khach_hang' %}active{% endif %}">
+                    👥 Khách hàng
+                </button>
+            </a>
+            
+            <a href="{{ url_for('danh_sach_dich_vu') }}" style="text-decoration: none;">
+                <button class="{% if request.endpoint == 'danh_sach_dich_vu' or request.endpoint == 'tao_dich_vu' %}active{% endif %}">
+                    🛠 Dịch vụ
+                </button>
+            </a>
+            
+            <a href="{{ url_for('danh_sach_linh_kien') }}" style="text-decoration: none;">
+                <button class="{% if request.endpoint == 'danh_sach_linh_kien' or request.endpoint == 'tao_linh_kien' %}active{% endif %}">
+                    🔩 Linh kiện
+                </button>
+            </a>
+            
+            <a href="{{ url_for('bao_cao') }}" style="text-decoration: none;">
+                <button class="{% if request.endpoint == 'bao_cao' %}active{% endif %}">
+                    📊 Báo cáo
+                </button>
+            </a>
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="user-info">
+            <div class="user-avatar">
+                {{ current_user.ho_ten[0] if current_user.ho_ten else 'A' }}
+            </div>
+            <div>
+                <div style="font-size: 12px; color: #9ca3af;">Xin chào,</div>
+                <div style="font-size: 14px; font-weight: 500;">{{ current_user.ho_ten or current_user.tai_khoan }}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                alert.style.display = 'none';
+            });
+        }, 5000);
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+
+{% block title %}Báo cáo - PC Care{% endblock %}
+
+{% block content %}
+<div class="top">
+    <div>
+        <div>Báo cáo</div>
+        <div style="font-size: 14px; font-weight: 400; color: #6b7280; margin-top: 5px;">
+            Thống kê và phân tích hoạt động kinh doanh
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="content" style="margin-bottom: 22px;">
+    <form method="GET">
+        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #374151; font-size: 14px;">Tháng</label>
+                <select name="thang" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                    {% for month in range(1, 13) %}
+                        <option value="{{ month }}" {% if month == thang %}selected{% endif %}>
+                            Tháng {{ month }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #374151; font-size: 14px;">Năm</label>
+                <select name="nam" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                    {% for year in range(2020, 2026) %}
+                        <option value="{{ year }}" {% if year == nam %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-primary">
+                    Lọc
+                </button>
+                <a href="{{ url_for('bao_cao') }}" class="btn btn-secondary">
+                    Reset
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Statistics Cards -->
+<div class="box-group">
+    <div class="box" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+        <h3>{{ "{:,.0f}".format(doanh_thu) }} VNĐ</h3>
+        <p>Doanh thu</p>
+    </div>
+    
+    <div class="box" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+        <h3>{{ thong_ke_trang_thai|length if thong_ke_trang_thai else 0 }}</h3>
+        <p>Tổng đơn hàng</p>
+    </div>
+    
+    <div class="box" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+        <h3>
+            {% set hoan_thanh_count = 0 %}
+            {% for trang_thai, so_luong in thong_ke_trang_thai %}
+                {% if trang_thai.value == 'Hoàn thành' %}
+                    {% set hoan_thanh_count = so_luong %}
+                {% endif %}
+            {% endfor %}
+            {{ hoan_thanh_count }}
+        </h3>
+        <p>Hoàn thành</p>
+    </div>
+    
+    <div class="box" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+        <h3>{{ top_dich_vu|length }}</h3>
+        <p>Dịch vụ sử dụng</p>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 22px;">
+    <!-- Trạng thái đơn hàng -->
+    <div class="content">
+        <h2>Thống kê đơn hàng theo trạng thái</h2>
+        {% if thong_ke_trang_thai %}
+            {% for trang_thai, so_luong in thong_ke_trang_thai %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <strong>{{ trang_thai.value }}</strong>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 100px; height: 8px; background: #e5e7eb; border-radius: 4px;">
+                        <div style="width: 60%; height: 100%; background: #3b82f6; border-radius: 4px;"></div>
+                    </div>
+                    <span class="tag blue">{{ so_luong }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #6b7280;">Không có dữ liệu trong kỳ này</p>
+        {% endif %}
+    </div>
+    
+    <!-- Top dịch vụ -->
+    <div class="content">
+        <h2>Top dịch vụ được sử dụng nhiều nhất</h2>
+        {% if top_dich_vu %}
+            {% for dich_vu, so_luong in top_dich_vu %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <strong>{{ dich_vu }}</strong>
+                </div>
+                <div style="display: flex; align-items-center; gap: 10px;">
+                    <div style="width: 100px; height: 8px; background: #e5e7eb; border-radius: 4px;">
+                        <div style="width: 70%; height: 100%; background: #10b981; border-radius: 4px;"></div>
+                    </div>
+                    <span class="tag green">{{ so_luong }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #6b7280;">Không có dữ liệu trong kỳ này</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Biểu đồ Thu Chi -->
+<div class="content" style="margin-bottom: 22px;">
+    <h2>Biểu đồ Thu Chi</h2>
+    <div style="padding: 20px; background: #f9fafb; border-radius: 12px;">
+        <canvas id="thuChiChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Export buttons -->
+<div class="content">
+    <h2>Xuất báo cáo</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <button class="btn btn-success">
+            Xuất Excel
+        </button>
+        <button class="btn btn-danger">
+            Xuất PDF
+        </button>
+        <button class="btn btn-primary">
+            In báo cáo
+        </button>
+        <button class="btn btn-secondary">
+            Gửi email
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Biểu đồ Thu Chi đẹp mắt với Chart.js
+window.onload = function() {
+    const ctx = document.getElementById('thuChiChart').getContext('2d');
+    
+    // Dữ liệu mẫu
+    const doanhThuData = [12000000, 15000000, 18000000, 14000000, 22000000, {{ doanh_thu or 20000000 }}];
+    const chiPhiData = [8000000, 9000000, 11000000, 8500000, 13000000, 12000000];
+    const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'];
+    
+    // Tạo gradient cho doanh thu
+    const doanhThuGradient = ctx.createLinearGradient(0, 0, 0, 400);
+    doanhThuGradient.addColorStop(0, 'rgba(16, 185, 129, 0.8)');
+    doanhThuGradient.addColorStop(1, 'rgba(5, 150, 105, 0.8)');
+    
+    // Tạo gradient cho chi phí
+    const chiPhiGradient = ctx.createLinearGradient(0, 0, 0, 400);
+    chiPhiGradient.addColorStop(0, 'rgba(239, 68, 68, 0.8)');
+    chiPhiGradient.addColorStop(1, 'rgba(220, 38, 38, 0.8)');
+    
+    // Vẽ biểu đồ với Chart.js
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Doanh thu',
+                    data: doanhThuData,
+                    backgroundColor: doanhThuGradient,
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Chi phí',
+                    data: chiPhiData,
+                    backgroundColor: chiPhiGradient,
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: {
+                            family: 'Inter',
+                            size: 12,
+                            weight: '600'
+                        },
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND'
+                                }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        color: '#6b7280'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        color: '#6b7280',
+                        callback: function(value) {
+                            return new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                                minimumFractionDigits: 0
+                            }).format(value);
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeInOutQuart'
+            }
+        }
+    });
+};
+
+// Chức năng xuất báo cáo
+function exportExcel() {
+    // Tạo dữ liệu Excel
+    const data = [
+        ['Thống kê Báo cáo', '', ''],
+        ['Tháng', '{{ thang }}', ''],
+        ['Năm', '{{ nam }}', ''],
+        ['', '', ''],
+        ['Chỉ tiêu', 'Giá trị', 'Ghi chú'],
+        ['Doanh thu', '{{ doanh_thu }} VNĐ', ''],
+        ['Tổng đơn hàng', '{{ thong_ke_trang_thai|length if thong_ke_trang_thai else 0 }}', ''],
+        ['Đơn hoàn thành', 
+            {% set hoan_thanh_count = 0 %}
+            {% for trang_thai, so_luong in thong_ke_trang_thai %}
+                {% if trang_thai.value == 'Hoàn thành' %}
+                    {% set hoan_thanh_count = so_luong %}
+                {% endif %}
+            {% endfor %}
+            {{ hoan_thanh_count }}
+        , '']
+    ];
+    
+    // Tạo CSV content
+    let csvContent = data.map(row => row.join(',')).join('\n');
+    
+    // Tạo blob và download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `bao_cao_thang_{{ thang }}_{{ nam }}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function exportPDF() {
+    // Sử dụng window.print() để xuất PDF
+    window.print();
+}
+
+function printReport() {
+    // In báo cáo
+    window.print();
+}
+
+function sendEmail() {
+    // Mở email client với dữ liệu báo cáo
+    const subject = encodeURIComponent(`Báo cáo PC Care - Tháng {{ thang }}/{{ nam }}`);
+    const body = encodeURIComponent(`Kính gửi,\n\nĐây là báo cáo hoạt động kinh doanh của PC Care tháng {{ thang }}/{{ nam }}:\n\n- Doanh thu: {{ "{:,.0f}".format(doanh_thu) }} VNĐ\n- Tổng đơn hàng: {{ thong_ke_trang_thai|length if thong_ke_trang_thai else 0 }}\n\nVui lòng xem file đính kèm để có thông tin chi tiết.\n\nTrân trọng,\nPC Care Management System`);
+    
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+// Gán sự kiện cho các nút
+document.addEventListener('DOMContentLoaded', function() {
+    // Tìm các nút theo nội dung
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        if (button.textContent.includes('Xuất Excel')) {
+            button.onclick = exportExcel;
+        } else if (button.textContent.includes('Xuất PDF')) {
+            button.onclick = exportPDF;
+        } else if (button.textContent.includes('In báo cáo')) {
+            button.onclick = printReport;
+        } else if (button.textContent.includes('Gửi email')) {
+            button.onclick = sendEmail;
+        }
+    });
+});
+
+// CSS cho khi in
+const printStyles = document.createElement('style');
+printStyles.textContent = `
+    @media print {
+        .sidebar { display: none !important; }
+        .main { margin-left: 0 !important; }
+        .btn { display: none !important; }
+        body { font-size: 12px; }
+        .content { break-inside: avoid; }
+    }
+`;
+document.head.appendChild(printStyles);
+</script>
+{% endblock %}
