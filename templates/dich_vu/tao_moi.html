@@ -1,98 +1,334 @@
 {% extends "base.html" %}
 
-{% block title %}Thêm dịch vụ mới - PC Care{% endblock %}
+{% block title %}Tạo dịch vụ mới - CSKH PC{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h3 mb-0">Thêm dịch vụ mới</h1>
-                <p class="text-muted">Tạo dịch vụ sửa chữa mới</p>
+<style>
+    .form-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .form-header {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 25px 30px;
+        border-radius: 15px 15px 0 0;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    }
+    
+    .form-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0 0 10px 0;
+    }
+    
+    .form-subtitle {
+        opacity: 0.9;
+        margin: 0;
+        font-size: 1rem;
+    }
+    
+    .form-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 25px;
+        border-left: 4px solid #10b981;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .form-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        color: #1f2937;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .section-icon {
+        background: #10b981;
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #374151;
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #10b981;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 30px;
+    }
+    
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #4b5563;
+        transform: translateY(-2px);
+    }
+    
+    .required-field::after {
+        content: ' *';
+        color: #ef4444;
+        font-weight: 600;
+    }
+    
+    .suggestions-list {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 20px;
+        border-left: 4px solid #e5e7eb;
+    }
+    
+    .suggestions-list h6 {
+        color: #374151;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .suggestions-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .suggestions-list li {
+        padding: 5px 0;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+    
+    .suggestions-list li i {
+        color: #10b981;
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 15px;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .button-group {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <h1 class="form-title">🔧 Tạo Dịch Vụ Mới</h1>
+        <p class="form-subtitle">Thêm dịch vụ sửa chữa mới vào danh mục</p>
+    </div>
+    
+    <form method="POST" id="formTaoDichVu">
+        <!-- Thông tin cơ bản -->
+        <div class="form-section">
+            <div class="section-title">
+                <div class="section-icon">📝</div>
+                Thông tin cơ bản
             </div>
-            <div>
-                <a href="{{ url_for('danh_sach_dich_vu') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </a>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="ten_dich_vu" class="form-label required-field">Tên dịch vụ</label>
+                    <input type="text" class="form-control" id="ten_dich_vu" name="ten_dich_vu" required 
+                           placeholder="Ví dụ: Cài đặt Windows, Vệ sinh máy tính...">
+                </div>
+                <div class="form-group">
+                    <label for="ma_dich_vu" class="form-label">Mã dịch vụ</label>
+                    <input type="text" class="form-control" id="ma_dich_vu" name="ma_dich_vu" 
+                           placeholder="Ví dụ: DV001, DV002...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="mo_ta" class="form-label">Mô tả chi tiết</label>
+                <textarea class="form-control" id="mo_ta" name="mo_ta" rows="4" 
+                          placeholder="Mô tả chi tiết về dịch vụ, những gì sẽ được thực hiện..."></textarea>
             </div>
         </div>
-    </div>
-</div>
-
-<form method="POST">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h5 class="card-title mb-0">Thông tin dịch vụ</h5>
+        
+        <!-- Thông tin giá và bảo hành -->
+        <div class="form-section">
+            <div class="section-title">
+                <div class="section-icon">💰</div>
+                Giá và bảo hành
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="gia_ban" class="form-label required-field">Giá bán (VNĐ)</label>
+                    <input type="number" class="form-control" id="gia_ban" name="gia_ban" required 
+                           min="0" step="1000" placeholder="200000">
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="ten_dich_vu" class="form-label">Tên dịch vụ *</label>
-                        <input type="text" class="form-control" id="ten_dich_vu" name="ten_dich_vu" required
-                               placeholder="Ví dụ: Cài đặt Windows, Vệ sinh máy tính...">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="mo_ta" class="form-label">Mô tả</label>
-                        <textarea class="form-control" id="mo_ta" name="mo_ta" rows="4"
-                                  placeholder="Mô tả chi tiết về dịch vụ, những gì sẽ được thực hiện..."></textarea>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="gia_ban" class="form-label">Giá bán (VNĐ) *</label>
-                                <input type="number" class="form-control" id="gia_ban" name="gia_ban" 
-                                       required min="0" step="1000" placeholder="200000">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="thoi_gian_bao_hanh" class="form-label">Thời gian bảo hành (tháng)</label>
-                                <input type="number" class="form-control" id="thoi_gian_bao_hanh" name="thoi_gian_bao_hanh" 
-                                       min="0" placeholder="0">
-                                <small class="text-muted">Nhập 0 nếu không có bảo hành</small>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="thoi_gian_bao_hanh" class="form-label">Thời gian bảo hành (tháng)</label>
+                    <input type="number" class="form-control" id="thoi_gian_bao_hanh" name="thoi_gian_bao_hanh" 
+                           min="0" placeholder="0">
+                    <small style="color: #6b7280; font-size: 0.85rem;">Nhập 0 nếu không có bảo hành</small>
+                </div>
+                <div class="form-group">
+                    <label for="loai_dich_vu" class="form-label">Loại dịch vụ</label>
+                    <select class="form-control" id="loai_dich_vu" name="loai_dich_vu">
+                        <option value="">Chọn loại dịch vụ</option>
+                        <option value="sua_chua">🔧 Sửa chữa</option>
+                        <option value="bao_tri">🛡️ Bảo trì</option>
+                        <option value="cap_nhat">⬆️ Nâng cấp</option>
+                        <option value="tu_van">💬 Tư vấn</option>
+                    </select>
                 </div>
             </div>
         </div>
         
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h5 class="card-title mb-0">Gợi ý</h5>
+        <!-- Gợi ý -->
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Buttons -->
+                <div class="button-group">
+                    <a href="{{ url_for('danh_sach_dich_vu') }}" class="btn btn-secondary">
+                        ❌ Hủy
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        ✅ Lưu dịch vụ
+                    </button>
                 </div>
-                <div class="card-body">
-                    <h6>Các dịch vụ phổ biến:</h6>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-success"></i> Cài đặt Windows</li>
-                        <li><i class="fas fa-check text-success"></i> Vệ sinh máy tính</li>
-                        <li><i class="fas fa-check text-success"></i> Thay keo tản nhiệt</li>
-                        <li><i class="fas fa-check text-success"></i> Nâng cấp RAM</li>
-                        <li><i class="fas fa-check text-success"></i> Thay SSD</li>
-                        <li><i class="fas fa-check text-success"></i> Thay màn hình</li>
-                        <li><i class="fas fa-check text-success"></i> Sửa chữa Mainboard</li>
-                        <li><i class="fas fa-check text-success"></i> Cứu dữ liệu</li>
+            </div>
+            <div class="col-lg-4">
+                <div class="suggestions-list">
+                    <h6>💡 Dịch vụ phổ biến:</h6>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Cài đặt Windows</li>
+                        <li><i class="fas fa-check"></i> Vệ sinh máy tính</li>
+                        <li><i class="fas fa-check"></i> Thay keo tản nhiệt</li>
+                        <li><i class="fas fa-check"></i> Nâng cấp RAM</li>
+                        <li><i class="fas fa-check"></i> Thay SSD</li>
+                        <li><i class="fas fa-check"></i> Thay màn hình</li>
+                        <li><i class="fas fa-check"></i> Sửa chữa Mainboard</li>
+                        <li><i class="fas fa-check"></i> Cứu dữ liệu</li>
                     </ul>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('formTaoDichVu').addEventListener('submit', function(e) {
+    var tenDichVu = document.getElementById('ten_dich_vu').value.trim();
+    var giaBan = document.getElementById('gia_ban').value;
     
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ url_for('danh_sach_dich_vu') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i> Hủy
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Lưu dịch vụ
-                </button>
-            </div>
-        </div>
-    </div>
-</form>
+    if (!tenDichVu || !giaBan) {
+        e.preventDefault();
+        alert('Vui lòng điền đầy đủ các trường có dấu *!');
+        return false;
+    }
+    
+    if (parseFloat(giaBan) < 0) {
+        e.preventDefault();
+        alert('Giá bán phải lớn hơn hoặc bằng 0!');
+        return false;
+    }
+    
+    // Hiển thị loading
+    var submitBtn = e.target.querySelector('button[type="submit"]');
+    var originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '⏳ Đang xử lý...';
+    submitBtn.disabled = true;
+    
+    // Reset sau 2 giây nếu không submit
+    setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 2000);
+});
+</script>
 {% endblock %}

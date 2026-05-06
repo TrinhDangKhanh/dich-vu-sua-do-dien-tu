@@ -197,7 +197,9 @@ def create_app(config_name='default'):
                 return redirect(url_for('dashboard'))
             else:  # Khách hàng
                 return redirect(url_for('dashboard_khach_hang'))
-        return redirect(url_for('dang_nhap'))
+        
+        # Hiển thị trang chủ với hero section
+        return render_template('base.html')
     
     @app.route('/dang-nhap', methods=['GET', 'POST'])
     def dang_nhap():
@@ -272,7 +274,6 @@ def create_app(config_name='default'):
         return render_template('don_hang/danh_sach.html', don_hang=don_hang, trang_thai=trang_thai)
     
     @app.route('/don-hang/tao-moi', methods=['GET', 'POST'])
-    @login_required
     def tao_don_hang():
         if request.method == 'POST':
             # Lấy thông tin khách hàng
@@ -284,7 +285,12 @@ def create_app(config_name='default'):
             # Kiểm tra khách hàng đã tồn tại
             khach_hang = KhachHang.query.filter_by(so_dien_thoai=so_dien_thoai).first()
             if not khach_hang:
+                # Tạo mã khách hàng tự động
+                so_khach_hang = KhachHang.query.count() + 1
+                ma_khach_hang = f"KH{so_khach_hang:03d}"
+                
                 khach_hang = KhachHang(
+                    ma_khach_hang=ma_khach_hang,
                     ho_ten=ho_ten,
                     so_dien_thoai=so_dien_thoai,
                     email=email,
@@ -305,18 +311,31 @@ def create_app(config_name='default'):
             mat_khau = request.form.get('mat_khau')
             mo_ta_loi = request.form.get('mo_ta_loi')
             
+            # Map form values to enum values
+            loai_thiet_bi_mapping = {
+                'Laptop': LoaiThietBi.LAPTOP,
+                'PC Desktop': LoaiThietBi.PC_DESKTOP,
+                'Macbook': LoaiThietBi.MACBOOK,
+                'Máy in': LoaiThietBi.MAY_IN,
+                'Màn hình': LoaiThietBi.MAN_HINH,
+                'Khác': LoaiThietBi.KHAC
+            }
+            
+            # Get the enum value for device type
+            loai_thiet_bi_enum = loai_thiet_bi_mapping.get(loai_thiet_bi, LoaiThietBi.KHAC)
+            
             # Tạo đơn hàng
             don_hang = DonHang(
                 ma_don_hang=ma_don_hang,
                 khach_hang_id=khach_hang.id,
                 ten_thiet_bi=ten_thiet_bi,
-                loai_thiet_bi=LoaiThietBi(loai_thiet_bi),
+                loai_thiet_bi=loai_thiet_bi_enum,
                 nhan_hieu=nhan_hieu,
                 model=model,
                 serial_number=serial_number,
                 mat_khau=mat_khau,
                 mo_ta_loi=mo_ta_loi,
-                trang_thai=TrangThaiDonHang.CHO_TIEP_NHAN
+                trang_thai=TrangThaiDonHang.DANG_XU_LY
             )
             
             db.session.add(don_hang)
@@ -501,7 +520,7 @@ def create_app(config_name='default'):
         ).group_by(DonHang.trang_thai).all()
         
         # Tạo CSV content
-        csv_content = "Báo cáo PC Care\n"
+        csv_content = "Báo cáo CSKH PC\n"
         csv_content += f"Tháng: {thang}\n"
         csv_content += f"Năm: {nam}\n\n"
         csv_content += "Chỉ tiêu,Giá trị,Ghi chú\n"
@@ -654,7 +673,7 @@ def create_app(config_name='default'):
         
         # Tự động đăng nhập sau khi đăng ký thành công
         login_user(khach_hang)
-        flash('🎉 Đăng ký thành công! Chào mừng bạn đến với PC Care!', 'success')
+        flash('🎉 Đăng ký thành công! Chào mừng bạn đến với CSKH PC!', 'success')
         
         return redirect(url_for('dashboard_khach_hang'))
     

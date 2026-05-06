@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Đơn hàng - PC Care{% endblock %}
+{% block title %}Đơn hàng - CSKH PC{% endblock %}
 
 {% block content %}
 <div class="top">
@@ -116,7 +116,7 @@
                     <a href="{{ url_for('chi_tiet_don_hang', id=don.id) }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; margin-right: 5px;">
                         👁️
                     </a>
-                    <button class="btn btn-secondary" onclick="capNhatTrangThai({{ don.id }})" style="padding: 6px 12px; font-size: 12px;">
+                    <button class="btn btn-secondary" onclick="capNhatTrangThai('{{ don.id }}')" style="padding: 6px 12px; font-size: 12px;">
                         Edit
                     </button>
                 </td>

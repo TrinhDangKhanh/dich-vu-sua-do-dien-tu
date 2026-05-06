@@ -88,6 +88,7 @@ class KhachHang(db.Model):
     ho_ten = db.Column(db.String(100), nullable=False)
     so_dien_thoai = db.Column(db.String(20), nullable=False, unique=True, index=True)
     email = db.Column(db.String(100), index=True)
+    mat_khau = db.Column(db.String(255))  # Thêm mật khẩu cho đăng nhập
     dia_chi = db.Column(db.Text)
     ngay_sinh = db.Column(db.Date)
     gioi_tinh = db.Column(db.String(10))
@@ -95,8 +96,25 @@ class KhachHang(db.Model):
     ma_so_thue = db.Column(db.String(50))
     loai_khach_hang = db.Column(db.String(50), default='ca_nhan')  # ca_nhan, doanh_nghiep
     ghi_chu = db.Column(db.Text)
+    trang_thai = db.Column(db.String(20), default='hoat_dong')  # hoat_dong, khoa
     ngay_tao = db.Column(db.DateTime, default=datetime.utcnow)
     ngay_cap_nhat = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Flask-Login requirements cho khách hàng
+    is_active = db.Column(db.Boolean, default=True)
+    
+    @property
+    def is_authenticated(self):
+        return True
+    
+    def get_id(self):
+        return str(self.id)
+    
+    def set_password(self, password):
+        self.mat_khau = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.mat_khau, password)
     
     # Relationships
     don_hang = db.relationship('DonHang', backref='khach_hang', lazy='dynamic')
